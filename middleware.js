@@ -11,6 +11,9 @@ export async function middleware(request, response) {
   const loginResultData = await loginResult.json();
   const user = loginResultData.user;
 
+  const headers = new Headers();
+  headers.set("x-origin", origin);
+
   switch (pathname) {
     case "/":
       if (loginResult.status !== 200) {
@@ -34,16 +37,16 @@ export async function middleware(request, response) {
         }
       }
 
-      return NextResponse.next();
+      return NextResponse.next({ headers });
     case "/auth/login":
     case "/auth/register":
       if (loginResult.status !== 200) {
-        return NextResponse.next();
+        return NextResponse.next({ headers });
       }
 
       return NextResponse.redirect(new URL("/", request.url));
     default:
-      return NextResponse.next();
+      return NextResponse.next({ headers });
   }
 }
 

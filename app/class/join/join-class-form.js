@@ -10,15 +10,18 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useRouter } from "next/navigation";
+import { joinClass } from "@/lib/firebase/db/class";
 import { useState } from "react";
 
 export function JoinClassForm({ uid }) {
-  const router = useRouter();
   const [values, setValues] = useState({
     id: "",
   });
-  const [isLoading, setIsLoading] = useState(false);
+  const [status, setStatus] = useState({
+    loading: false,
+    done: false,
+    error: null,
+  });
 
   function handleInputChange(e) {
     const { id, value } = e.target;
@@ -28,13 +31,34 @@ export function JoinClassForm({ uid }) {
   async function handleFormSubmit(e) {
     e.preventDefault();
 
-    setIsLoading(true);
+    setStatus({ loading: true, done: false, error: null });
     try {
-      setIsLoading(false);
+      await joinClass(uid, values.id);
+      setStatus({ loading: false, done: true, error: null });
     } catch (error) {
       console.log(error);
-      setIsLoading(false);
+      setStatus({ loading: false, done: false, error: error.message });
     }
+  }
+
+  if (status.done) {
+    return (
+      <Card className="max-w-sm mx-auto mt-24">
+        <CardHeader className="text-center">
+          <CardTitle>Class Manager</CardTitle>
+          <CardDescription>Permintaan gabung sudah terkirim!</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p className="leading-7 [&:not(:first-child)]:mt-6 text-center">
+            Mohon tunggu untuk ketua kelas anda untuk menerima permintaan
+            bergabung anda.
+          </p>
+          <form action="/api/auth/logout" method="post">
+            <button>Logout</button>
+          </form>
+        </CardContent>
+      </Card>
+    );
   }
 
   return (

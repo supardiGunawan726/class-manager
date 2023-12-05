@@ -27,5 +27,5 @@ export default async function JoinClass({ searchParams }) {
     }
   }
 
-  return <JoinClassForm />;
+  return <JoinClassForm uid={uid} />;
 }
