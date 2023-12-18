@@ -1,147 +1,53 @@
-"use client";
+import { Card, CardContent } from "@/components/ui/card";
+import { Greeting } from "./greeting";
+import Link from "next/link";
+import * as Icon from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
-import { useRouter } from "next/navigation";
-import { useAuthContext } from "./auth-provider";
-import { useUserClassContext } from "./user-class-provider";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-
-export default function Home() {
-  const router = useRouter();
-  const user = useAuthContext();
-  const userClass = useUserClassContext();
-
-  async function logout() {
-    await fetch("/api/auth/logout", {
-      method: "POST",
-    });
-    router.refresh();
-  }
-
+export default function DashboardPage() {
   return (
-    <Card className="max-w-md mx-auto mt-24">
-      <CardHeader className="text-center">
-        <CardTitle>Class Manager</CardTitle>
-        <CardDescription>Anggap saja ini sudah didashboard ya</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Label className="font-bold">Info user</Label>
-        <Separator className="my-2" />
-        <ul>
-          <li>
-            <div className="flex justify-between">
-              <span>UID</span>
-              <span>{user.uid}</span>
-            </div>
-          </li>
-          <li>
-            <Separator className="my-2" />
-          </li>
-          <li>
-            <div className="flex justify-between">
-              <span>Nama</span>
-              <span>{user.name}</span>
-            </div>
-          </li>
-          <li>
-            <Separator className="my-2" />
-          </li>
-          <li>
-            <div className="flex justify-between">
-              <span>Email</span>
-              <span>{user.email}</span>
-            </div>
-          </li>
-          <li>
-            <Separator className="my-2" />
-          </li>
-          <li>
-            <div className="flex justify-between">
-              <span>NIM</span>
-              <span>{user.nim}</span>
-            </div>
-          </li>
-        </ul>
-
-        <Label className="font-bold mt-8 inline-block">Info kelas</Label>
-        <Separator className="my-2" />
-        <ul>
-          <li>
-            <div className="flex justify-between">
-              <span>ID kelas</span>
-              <span>{userClass.id}</span>
-            </div>
-          </li>
-          <li>
-            <Separator className="my-2" />
-          </li>
-          <li>
-            <div className="flex justify-between">
-              <span>Nama kelas</span>
-              <span>{userClass.name}</span>
-            </div>
-          </li>
-        </ul>
-
-        <Label className="font-bold mt-8 inline-block">Member kelas</Label>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>UID</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <TableRow>
-              {userClass.member.map((uid) => (
-                <TableCell key={uid} className="font-medium">
-                  {uid}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableBody>
-        </Table>
-
-        <Label className="font-bold mt-8 inline-block">
-          Permintaan bergabung ke kelas
-        </Label>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>UID</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <TableRow>
-              {userClass.join_requests.map((join_request) => (
-                <TableCell key={join_request.uid} className="font-medium">
-                  {join_request.uid}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableBody>
-        </Table>
-      </CardContent>
-      <CardFooter className="flex justify-center">
-        <Button onClick={logout}>Logout</Button>
-      </CardFooter>
-    </Card>
+    <main className="px-12 pt-10">
+      <header>
+        <Greeting />
+      </header>
+      <div className="grid grid-cols-[3fr_2fr] gap-8 mt-12">
+        <div>
+          <Card>
+            <CardContent className="pt-7 flex justify-around">
+              <Link
+                href="/member"
+                className="flex flex-col items-center gap-2 w-16"
+              >
+                <div className="w-16 h-16 grid place-items-center bg-yellow-400/20 text-yellow-400 rounded-lg">
+                  <Icon.Users2 width={28} height={28} />
+                </div>
+                <span className="text-center whitespace-nowrap">
+                  Data mahasiswa
+                </span>
+              </Link>
+              <Link
+                href="/documentation"
+                className="flex flex-col items-center gap-2 w-16"
+              >
+                <div className="w-16 h-16 grid place-items-center bg-orange-400/20 text-orange-400 rounded-lg">
+                  <Icon.Folder width={28} height={28} />
+                </div>
+                <span className="text-center whitespace-nowrap">
+                  Dokumentasi
+                </span>
+              </Link>
+              <Link
+                href="/utility"
+                className="flex flex-col items-center gap-2 w-16"
+              >
+                <div className="w-16 h-16 grid place-items-center bg-green-400/20 text-green-400 rounded-lg">
+                  <Icon.PencilRuler width={28} height={28} />
+                </div>
+                <span className="text-center whitespace-nowrap">Utilitas</span>
+              </Link>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </main>
   );
 }
