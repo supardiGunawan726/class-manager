@@ -18,7 +18,9 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import Link from "next/link";
+import * as Icon from "lucide-react";
 
 export default function Login() {
   const router = useRouter();
@@ -26,6 +28,7 @@ export default function Login() {
     email: "",
     password: "",
   });
+  const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
   async function handleInputChange(e) {
@@ -38,11 +41,23 @@ export default function Login() {
     e.preventDefault();
 
     try {
+      setError(null);
       setIsLoading(true);
       await signInWithEmailAndPassword(auth, values.email, values.password);
       setIsLoading(false);
     } catch (error) {
       console.error(error);
+
+      if (error.message.includes("missing-password")) {
+        setError("Password tidak boleh kosong");
+      } else if (error.message.includes("invalid-credential")) {
+        setError("Email atau password salah");
+      } else if (error.message.includes("invalid-email")) {
+        setError("Email tidak valid atau belum terdaftar");
+      } else {
+        setError("Terjadi kesalahan, mohon coba kembali");
+      }
+
       setIsLoading(false);
     }
   }
@@ -75,6 +90,12 @@ export default function Login() {
         <CardDescription>Masuk</CardDescription>
       </CardHeader>
       <CardContent>
+        {error && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertTitle>Error!</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
         <form className="grid w-full gap-3" onSubmit={handleFormSubmit}>
           <div className="grid w-full max-w-sm items-center gap-2">
             <Label htmlFor="email">Email</Label>
@@ -97,7 +118,20 @@ export default function Login() {
             />
           </div>
           <div className="grid w-full max-w-sm items-center gap-2 mt-4">
-            <Button>Masuk</Button>
+            <Button disabled={isLoading} className="disabled:opacity-60">
+              <div className="relative">
+                {isLoading && (
+                  <span className="block mr-1 absolute translate-x-[calc(-100%-4px)]">
+                    <Icon.Loader2
+                      className="animate-spin"
+                      width={18}
+                      height={18}
+                    />
+                  </span>
+                )}
+                <span>Masuk</span>
+              </div>
+            </Button>
             <Link
               href="/auth/register"
               className={buttonVariants({ variant: "outline" })}

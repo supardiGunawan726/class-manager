@@ -12,6 +12,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { joinClass } from "@/lib/firebase/db/class";
 import { useState } from "react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import * as Icon from "lucide-react";
 
 export function JoinClassForm({ uid }) {
   const [values, setValues] = useState({
@@ -36,8 +38,12 @@ export function JoinClassForm({ uid }) {
       await joinClass(uid, values.id);
       setStatus({ loading: false, done: true, error: null });
     } catch (error) {
-      console.log(error);
-      setStatus({ loading: false, done: false, error: error.message });
+      console.error(error);
+      setStatus({
+        loading: false,
+        done: false,
+        error: "Terjadi kesalahan, mohon coba kembali",
+      });
     }
   }
 
@@ -50,12 +56,9 @@ export function JoinClassForm({ uid }) {
         </CardHeader>
         <CardContent>
           <p className="leading-7 [&:not(:first-child)]:mt-6 text-center">
-            Mohon tunggu untuk ketua kelas anda untuk menerima permintaan
-            bergabung anda.
+            Mohon tunggu ketua kelas anda untuk menerima permintaan bergabung
+            anda.
           </p>
-          <form action="/api/auth/logout" method="post">
-            <button>Logout</button>
-          </form>
         </CardContent>
       </Card>
     );
@@ -68,6 +71,12 @@ export function JoinClassForm({ uid }) {
         <CardDescription>Gabung kelas</CardDescription>
       </CardHeader>
       <CardContent>
+        {status.error && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertTitle>Error!</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
         <form className="grid w-full gap-3" onSubmit={handleFormSubmit}>
           <div className="grid w-full max-w-sm items-center gap-2">
             <Label htmlFor="id">ID kelas</Label>
@@ -80,7 +89,20 @@ export function JoinClassForm({ uid }) {
             />
           </div>
           <div className="grid w-full max-w-sm items-center gap-2 mt-4">
-            <Button>Gabung</Button>
+            <Button disabled={status.loading} className="disabled:opacity-60">
+              <div className="relative">
+                {status.loading && (
+                  <span className="block mr-1 absolute translate-x-[calc(-100%-4px)]">
+                    <Icon.Loader2
+                      className="animate-spin"
+                      width={18}
+                      height={18}
+                    />
+                  </span>
+                )}
+                <span>Gabung</span>
+              </div>
+            </Button>
           </div>
         </form>
       </CardContent>

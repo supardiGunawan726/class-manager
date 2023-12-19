@@ -1,7 +1,6 @@
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { buttonVariants, Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -19,18 +18,21 @@ import {
 } from "@/components/ui/dropdown-menu";
 import * as Icon from "lucide-react";
 import { headers } from "next/headers";
-import { getClassById } from "@/lib/firebase/admin/db/class";
+import {
+  getClassById,
+  getClassJoinRequest,
+} from "@/lib/firebase/admin/db/class";
 import { getUsersDataByUids } from "@/lib/firebase/admin/db/user";
 
-export default async function MemberPage() {
+export default async function JoinRequestPage() {
   const userClassId = headers().get("x-class-id");
-  const userClass = await getClassById(userClassId);
-  const userClassMembers = await getUsersDataByUids(userClass.member);
+  const classJoinRequestIds = await getClassJoinRequest(userClassId);
+  const classJoinRequests = await getUsersDataByUids(classJoinRequestIds);
 
   return (
     <main className="px-12 pt-10">
       <header>
-        <h1 className="font-semibold text-4xl">Data mahasiswa</h1>
+        <h1 className="font-semibold text-4xl">Permintaan bergabung</h1>
       </header>
       <div className="mt-12">
         <header className="flex items-center">
@@ -41,15 +43,6 @@ export default async function MemberPage() {
             placeholder="Cari mahasiswa dengan nama"
             className="w-[276px]"
           />
-          <Link
-            href="/member/join-request"
-            className={cn(buttonVariants({ variant: "outline" }), "ml-auto")}
-          >
-            Permintaan bergabung
-          </Link>
-          <Link href="/member/add" className={cn(buttonVariants(), "ml-2")}>
-            Tambah mahasiswa
-          </Link>
         </header>
         <div className="mt-4">
           <Table>
@@ -63,12 +56,12 @@ export default async function MemberPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {userClassMembers.map((member) => (
-                <TableRow key={member.uid}>
-                  <TableCell>{member.name}</TableCell>
-                  <TableCell>{member.email}</TableCell>
-                  <TableCell>{member.nim}</TableCell>
-                  <TableCell>{member.role}</TableCell>
+              {classJoinRequests.map((user) => (
+                <TableRow key={user.uid}>
+                  <TableCell>{user.name}</TableCell>
+                  <TableCell>{user.email}</TableCell>
+                  <TableCell>{user.nim}</TableCell>
+                  <TableCell>{user.role}</TableCell>
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -79,9 +72,7 @@ export default async function MemberPage() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem asChild>
-                          <Link href={`/member/${member.uid}`}>Lihat</Link>
-                        </DropdownMenuItem>
+                        <DropdownMenuItem>Tambahkan</DropdownMenuItem>
                         <DropdownMenuItem>Hapus</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>

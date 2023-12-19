@@ -1,0 +1,52 @@
+import { getUserDataByUid } from "@/lib/firebase/admin/db/user";
+import { notFound } from "next/navigation";
+import * as Icon from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+export default async function MemberPage({ params }) {
+  const { uid } = params;
+
+  if (!uid) {
+    return notFound();
+  }
+
+  const user = await getUserDataByUid(uid);
+
+  if (!user) {
+    return notFound();
+  }
+
+  return (
+    <main className="px-12 pt-10">
+      <header className="flex items-center justify-start gap-6">
+        <div>
+          <figure className="w-24 h-24 bg-slate-500 text-white grid place-items-center rounded-full">
+            <Icon.User2 />
+          </figure>
+        </div>
+        <div>
+          <h1 className="font-semibold text-4xl">{user.name}</h1>
+          <p>
+            {user.nim} - {user.role}
+          </p>
+        </div>
+        <div className="ml-auto flex gap-2">
+          <Button
+            variant="outline"
+            size="icon"
+            className="rounded-full text-slate-500 hover:text-slate-500"
+          >
+            <Icon.Pencil />
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            className="rounded-full text-red-500 hover:text-red-500 border-red-100"
+          >
+            <Icon.Trash />
+          </Button>
+        </div>
+      </header>
+    </main>
+  );
+}

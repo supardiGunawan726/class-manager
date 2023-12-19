@@ -23,7 +23,8 @@ export default async function RootLayout({ children }) {
   });
   const loginResultData = await loginResult.json();
   const user = loginResultData.user;
-  const userClass = user ? await getClassById(user.class_id) : null;
+  const userClass =
+    user && user.class_id ? await getClassById(user.class_id) : null;
 
   return (
     <html lang="en">

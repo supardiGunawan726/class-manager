@@ -14,39 +14,67 @@ export async function middleware(request, response) {
   const headers = new Headers();
   headers.set("x-origin", origin);
 
-  switch (pathname) {
-    case "/":
-      if (loginResult.status !== 200) {
-        return NextResponse.redirect(new URL("/auth/login", request.url));
-      }
-
-      if (!user.class_id) {
-        switch (user.role) {
-          case "ketua":
-            return NextResponse.redirect(
-              new URL(`/class/create?uid=${user.uid}`, request.url)
-            );
-          case "anggota":
-            return NextResponse.redirect(
-              new URL(`/class/join?uid=${user.uid}`, request.url)
-            );
-          default:
-            return NextResponse.redirect(
-              new URL(`/class/join?uid=${user.uid}`, request.url)
-            );
-        }
-      }
-
+  if (
+    pathname.startsWith("/auth/login") ||
+    pathname.startsWith("/auth/register")
+  ) {
+    if (loginResult.status !== 200) {
       return NextResponse.next({ headers });
-    case "/auth/login":
-    case "/auth/register":
-      if (loginResult.status !== 200) {
-        return NextResponse.next({ headers });
-      }
+    }
 
-      return NextResponse.redirect(new URL("/", request.url));
-    default:
-      return NextResponse.next({ headers });
+    headers.set("x-uid", user.uid);
+    return NextResponse.redirect(new URL("/", request.url), { headers });
+  } else if (
+    pathname.startsWith("/class/join") ||
+    pathname.startsWith("/class/create")
+  ) {
+    if (loginResult.status !== 200) {
+      return NextResponse.redirect(new URL("/auth/login", request.url), {
+        headers,
+      });
+    }
+    headers.set("x-uid", user.uid);
+
+    if (user.class_id) {
+      headers.set("x-class-id", user.class_id);
+      return NextResponse.redirect(new URL("/", request.url), {
+        headers,
+      });
+    }
+
+    return NextResponse.next({
+      headers,
+    });
+  } else {
+    if (loginResult.status !== 200) {
+      return NextResponse.redirect(new URL("/auth/login", request.url), {
+        headers,
+      });
+    }
+
+    if (!user.class_id) {
+      switch (user.role) {
+        case "ketua":
+          return NextResponse.redirect(
+            new URL(`/class/create?uid=${user.uid}`, request.url),
+            { headers }
+          );
+        case "anggota":
+          return NextResponse.redirect(
+            new URL(`/class/join?uid=${user.uid}`, request.url),
+            { headers }
+          );
+        default:
+          return NextResponse.redirect(
+            new URL(`/class/join?uid=${user.uid}`, request.url),
+            { headers }
+          );
+      }
+    }
+
+    headers.set("x-uid", user.uid);
+    headers.set("x-class-id", user.class_id);
+    return NextResponse.next({ headers });
   }
 }
 

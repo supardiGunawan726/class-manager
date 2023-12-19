@@ -27,6 +27,8 @@ import {
 import { auth } from "@/lib/firebase/firebase-config";
 import { useRouter } from "next/navigation";
 import { setUserData } from "@/lib/firebase/db/user";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import * as Icon from "lucide-react";
 
 export default function Register() {
   const router = useRouter();
@@ -38,6 +40,7 @@ export default function Register() {
     role: "",
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(false);
 
   function handleInputChange(e) {
     const { id, value } = e.target;
@@ -48,13 +51,14 @@ export default function Register() {
   async function handleFormSubmit(e) {
     e.preventDefault();
 
-    setIsLoading(true);
-
     try {
+      setError(null);
+      setIsLoading(true);
       await createUserWithEmailAndPassword(auth, values.email, values.password);
       setIsLoading(false);
     } catch (error) {
       console.error(error);
+      setError("Terjadi kesalahan, mohon coba kembali");
       setIsLoading(false);
     }
   }
@@ -102,6 +106,12 @@ export default function Register() {
         <CardDescription>Daftar</CardDescription>
       </CardHeader>
       <CardContent>
+        {error && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertTitle>Error!</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
         <form className="grid w-full gap-3" onSubmit={handleFormSubmit}>
           <div className="grid w-full max-w-sm items-center gap-2">
             <Label htmlFor="fullname">Nama lengkap</Label>
@@ -111,6 +121,7 @@ export default function Register() {
               placeholder="Masukan nama lengkap"
               value={values.fullname}
               onChange={handleInputChange}
+              required
             />
           </div>
           <div className="grid w-full max-w-sm items-center gap-2">
@@ -121,6 +132,7 @@ export default function Register() {
               placeholder="Masukan email"
               value={values.email}
               onChange={handleInputChange}
+              required
             />
           </div>
           <div className="grid w-full max-w-sm items-center gap-2">
@@ -141,6 +153,7 @@ export default function Register() {
               placeholder="Masukan kata sandi"
               value={values.password}
               onChange={handleInputChange}
+              required
             />
           </div>
           <div className="grid w-full max-w-sm items-center gap-2">
@@ -149,6 +162,7 @@ export default function Register() {
               onValueChange={(value) =>
                 handleInputChange({ target: { value, id: "role" } })
               }
+              required
             >
               <SelectTrigger id="role">
                 <SelectValue placeholder="Role" />
@@ -160,7 +174,20 @@ export default function Register() {
             </Select>
           </div>
           <div className="grid w-full max-w-sm items-center gap-2 mt-4">
-            <Button>Daftar</Button>
+            <Button disabled={isLoading} className="disabled:opacity-60">
+              <div className="relative">
+                {isLoading && (
+                  <span className="block mr-1 absolute translate-x-[calc(-100%-4px)]">
+                    <Icon.Loader2
+                      className="animate-spin"
+                      width={18}
+                      height={18}
+                    />
+                  </span>
+                )}
+                <span>Daftar</span>
+              </div>
+            </Button>
             <Link
               href="/auth/login"
               className={buttonVariants({ variant: "outline" })}
