@@ -1,9 +1,9 @@
 "use client";
 
 import * as Icon from "lucide-react";
-import { useAuthContext } from "../auth-provider";
+import { useAuthContext } from "./auth-provider";
 import Link from "next/link";
-import { useUserClassContext } from "../user-class-provider";
+import { useUserClassContext } from "./user-class-provider";
 
 export function Sidebar() {
   const user = useAuthContext();
@@ -16,12 +16,16 @@ export function Sidebar() {
           <Icon.User />
         </div>
         <div className="font-semibold">
-          <Link href={`/member/${user.uid}`}>
-            <h4 className="text-xl hover:underline">{user.name}</h4>
-          </Link>
-          <Link href="/class" className="hover:underline">
-            <span className="text-sm">{userClass.name}</span>
-          </Link>
+          {user && (
+            <Link href={`/member/${user.uid}`}>
+              <h4 className="text-lg hover:underline">{user.name}</h4>
+            </Link>
+          )}
+          {userClass && (
+            <Link href="/class" className="hover:underline">
+              <span className="text-xs">{userClass.name}</span>
+            </Link>
+          )}
         </div>
       </header>
       <nav className="mt-16 pl-1 grid gap-6">

@@ -2,7 +2,8 @@
 
 import * as Icon from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useUserClassContext } from "@/app/user-class-provider";
+import { useUserClassContext } from "@/app/(dashboard)/user-class-provider";
+import { ClassToolbar } from "./class-toolbar";
 
 export default async function ClassInfoPage() {
   const userClass = useUserClassContext();
@@ -19,22 +20,7 @@ export default async function ClassInfoPage() {
           <h1 className="font-semibold text-4xl">{userClass.name}</h1>
           <p>{userClass.id}</p>
         </div>
-        <div className="ml-auto flex gap-2">
-          <Button
-            variant="outline"
-            size="icon"
-            className="rounded-full text-slate-500 hover:text-slate-500"
-          >
-            <Icon.Pencil />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            className="rounded-full text-red-500 hover:text-red-500 border-red-100"
-          >
-            <Icon.Trash />
-          </Button>
-        </div>
+        <ClassToolbar />
       </header>
     </main>
   );

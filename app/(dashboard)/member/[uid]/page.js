@@ -1,7 +1,7 @@
 import { getUserDataByUid } from "@/lib/firebase/admin/db/user";
 import { notFound } from "next/navigation";
 import * as Icon from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { MemberToolbar } from "./member-toolbar";
 
 export default async function MemberPage({ params }) {
   const { uid } = params;
@@ -30,22 +30,7 @@ export default async function MemberPage({ params }) {
             {user.nim} - {user.role}
           </p>
         </div>
-        <div className="ml-auto flex gap-2">
-          <Button
-            variant="outline"
-            size="icon"
-            className="rounded-full text-slate-500 hover:text-slate-500"
-          >
-            <Icon.Pencil />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            className="rounded-full text-red-500 hover:text-red-500 border-red-100"
-          >
-            <Icon.Trash />
-          </Button>
-        </div>
+        <MemberToolbar user={user} />
       </header>
     </main>
   );
