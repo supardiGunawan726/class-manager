@@ -102,7 +102,7 @@ export function MemberTableToolbar() {
           >
             Permintaan bergabung
           </Link>
-          <Link href="/member/add" className={cn(buttonVariants(), "ml-2")}>
+          <Link href="/member/new" className={cn(buttonVariants(), "ml-2")}>
             Tambah mahasiswa
           </Link>
         </>
