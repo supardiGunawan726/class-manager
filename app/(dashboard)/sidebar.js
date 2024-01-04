@@ -38,19 +38,19 @@ export function Sidebar() {
           <span>Data mahasiswa</span>
         </Link>
         <Link href="/fund" className="flex gap-6">
-          <Icon.Wallet />
+          <Icon.DollarSign />
           <span>Uang kas</span>
         </Link>
         <Link href="/documentation" className="flex gap-6">
-          <Icon.Folder />
-          <span>Dokumentasi</span>
+          <Icon.Camera />
+          <span>Dokumentasi kelas</span>
         </Link>
         <Link href="/discussion" className="flex gap-6">
           <Icon.MessageCircle />
           <span>Forum Diskusi</span>
         </Link>
         <Link href="/notification" className="flex gap-6">
-          <Icon.Megaphone />
+          <Icon.Bell />
           <span>Pengumuman</span>
         </Link>
         <Link href="/utility" className="flex gap-6">
