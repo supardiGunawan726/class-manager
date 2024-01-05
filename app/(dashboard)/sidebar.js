@@ -42,7 +42,7 @@ export function Sidebar({ user, userClass }) {
           <Icon.MessageCircle />
           <span>Forum Diskusi</span>
         </Link>
-        <Link href="/notification" className="flex gap-6">
+        <Link href="/announcement" className="flex gap-6">
           <Icon.Bell />
           <span>Pengumuman</span>
         </Link>

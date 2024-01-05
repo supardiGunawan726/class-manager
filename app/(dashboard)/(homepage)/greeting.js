@@ -1,6 +1,6 @@
 "use client";
 
-import { useAuthContext } from "./auth-provider";
+import { useAuthContext } from "../auth-provider";
 
 export function Greeting() {
   const user = useAuthContext();
