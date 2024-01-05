@@ -2,6 +2,14 @@ import { getUserDataByUid } from "@/lib/firebase/admin/db/user";
 import { notFound } from "next/navigation";
 import * as Icon from "lucide-react";
 import { MemberToolbar } from "./member-toolbar";
+import { Separator } from "@/components/ui/separator";
+import { unstable_cache } from "next/cache";
+
+const getCachedCurrentUser = unstable_cache(
+  async (uid) => getUserDataByUid(uid),
+  ["current-user"],
+  { tags: ["current-user"] }
+);
 
 export default async function MemberPage({ params }) {
   const { uid } = params;
@@ -10,7 +18,7 @@ export default async function MemberPage({ params }) {
     return notFound();
   }
 
-  const user = await getUserDataByUid(uid);
+  const user = await getCachedCurrentUser(uid);
 
   if (!user) {
     return notFound();
@@ -32,6 +40,7 @@ export default async function MemberPage({ params }) {
         </div>
         <MemberToolbar user={user} />
       </header>
+      <Separator className="my-6" />
     </main>
   );
 }

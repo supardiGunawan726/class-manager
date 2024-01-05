@@ -1,8 +1,4 @@
-import {
-  createUser,
-  getUserDataByEmail,
-  getUserDataByUid,
-} from "@/lib/firebase/admin/db/user";
+import { createUser } from "@/lib/firebase/admin/db/user";
 import { NextResponse } from "next/server";
 
 export async function POST(req, res) {

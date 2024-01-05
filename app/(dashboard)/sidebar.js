@@ -1,14 +1,7 @@
-"use client";
-
 import * as Icon from "lucide-react";
-import { useAuthContext } from "./auth-provider";
 import Link from "next/link";
-import { useUserClassContext } from "./user-class-provider";
 
-export function Sidebar() {
-  const user = useAuthContext();
-  const userClass = useUserClassContext();
-
+export function Sidebar({ user, userClass }) {
   return (
     <aside className="min-h-screen bg-foreground text-background p-8">
       <header className="flex gap-4 items-center">
