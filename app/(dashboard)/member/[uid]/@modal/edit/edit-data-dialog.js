@@ -8,7 +8,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
-import { requestRevalidatePath } from "@/lib/utils";
 import { usePathname, useParams, useRouter } from "next/navigation";
 
 export function EditDataDialog({ user }) {
@@ -34,7 +33,6 @@ export function EditDataDialog({ user }) {
           ? "Kamu akan dialihkan ke halaman login"
           : undefined,
     });
-    await requestRevalidatePath(`/member/${params.uid}`, "page");
     router.replace(`/member/${params.uid}`);
   }
 

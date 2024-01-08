@@ -3,7 +3,7 @@ import { EditDataDialog } from "./edit-data-dialog";
 import { unstable_cache } from "next/cache";
 
 const getCachedCurrentUser = unstable_cache(
-  async (uid) => getUserDataByUid(uid),
+  getUserDataByUid,
   ["current-user"],
   { tags: ["current-user"] }
 );

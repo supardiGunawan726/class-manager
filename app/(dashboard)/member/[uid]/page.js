@@ -6,7 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import { unstable_cache } from "next/cache";
 
 const getCachedCurrentUser = unstable_cache(
-  async (uid) => getUserDataByUid(uid),
+  getUserDataByUid,
   ["current-user"],
   { tags: ["current-user"] }
 );

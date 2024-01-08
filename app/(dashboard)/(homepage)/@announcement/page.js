@@ -3,10 +3,10 @@ import { getAnnouncements } from "@/lib/firebase/admin/db/announcement";
 import { unstable_cache } from "next/cache";
 import { headers } from "next/headers";
 import { getUserDataByUid } from "@/lib/firebase/admin/db/user";
-import { formatTimestamp } from "@/lib/utils";
+import { AnnouncementCard } from "@/components/announcement";
 
 const getCachedCurrentUser = unstable_cache(
-  async (uid) => getUserDataByUid(uid),
+  getUserDataByUid,
   ["current-user"],
   { tags: ["current-user"] }
 );
@@ -28,16 +28,11 @@ export default async function Announcement() {
           </p>
         )}
         {announcements.map((announcement) => (
-          <Card className="grid gap-1" key={announcement.id}>
-            <CardHeader className="pb-0">
-              <span className="text-xs text-slate-500">
-                {formatTimestamp(announcement.published_at)}
-              </span>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-slate-900">{announcement.content}</p>
-            </CardContent>
-          </Card>
+          <AnnouncementCard
+            key={announcement.id}
+            announcement={announcement}
+            user={user}
+          />
         ))}
       </CardContent>
     </Card>

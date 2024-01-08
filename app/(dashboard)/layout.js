@@ -7,7 +7,7 @@ import { headers } from "next/headers";
 import { unstable_cache } from "next/cache";
 
 const getCachedCurrentUser = unstable_cache(
-  async (uid) => getUserDataByUid(uid),
+  getUserDataByUid,
   ["current-user"],
   { tags: ["current-user"] }
 );
