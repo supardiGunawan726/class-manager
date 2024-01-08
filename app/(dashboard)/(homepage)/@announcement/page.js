@@ -11,11 +11,17 @@ const getCachedCurrentUser = unstable_cache(
   { tags: ["current-user"] }
 );
 
+const getCachedAllAnnouncements = unstable_cache(
+  getAnnouncements,
+  ["announcements"],
+  { tags: ["announcements"] }
+);
+
 export default async function Announcement() {
   const uid = headers().get("x-uid");
   const user = await getCachedCurrentUser(uid);
 
-  const announcements = await getAnnouncements(user.class_id);
+  const announcements = await getCachedAllAnnouncements(user.class_id);
   return (
     <Card>
       <CardHeader>
