@@ -6,10 +6,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { createAnnouncement } from "./actions";
 import * as Icon from "lucide-react";
+import { editAnnouncement } from "./actions";
 
-export function NewAnnouncementForm({ user, onDataSaved }) {
+export function EditAnnouncementForm({ author, announcement, onDataSaved }) {
   const [status, setStatus] = useState({
     loading: false,
     success: false,
@@ -23,13 +23,13 @@ export function NewAnnouncementForm({ user, onDataSaved }) {
 
       const formData = new FormData(e.target);
       const data = {
-        class_id: user.class_id,
-        author: user.uid,
+        class_id: author.class_id,
+        id: announcement.id,
         title: formData.get("title"),
         content: formData.get("content"),
       };
 
-      await createAnnouncement(data);
+      await editAnnouncement(data);
       onDataSaved(data);
 
       setStatus({ loading: false, success: true });
@@ -50,6 +50,7 @@ export function NewAnnouncementForm({ user, onDataSaved }) {
           type="text"
           placeholder="Masukan judul pengumuman"
           className="col-span-3"
+          defaultValue={announcement.title}
           required
         />
       </div>
@@ -62,6 +63,7 @@ export function NewAnnouncementForm({ user, onDataSaved }) {
           name="content"
           placeholder="Masukan isi dari pengumuman"
           className="col-span-3"
+          defaultValue={announcement.content}
           required
         />
       </div>
@@ -69,12 +71,12 @@ export function NewAnnouncementForm({ user, onDataSaved }) {
         <Button type="submit" disabled={status.loading}>
           {!status.loading ? (
             <>
-              <span>Buat pengumuman</span>
+              <span>Simpan perubahan</span>
             </>
           ) : (
             <>
               <Icon.Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              <span>Membuat pengumuman</span>
+              <span>Menyimpan perubahan</span>
             </>
           )}
         </Button>

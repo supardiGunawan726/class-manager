@@ -8,10 +8,10 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { useRouter, usePathname } from "next/navigation";
-import { NewAnnouncementForm } from "./new-announcement-form";
+import { EditAnnouncementForm } from "./edit-announcement-form";
 import { useToast } from "@/components/ui/use-toast";
 
-export function NewAnnouncementDialog({ user }) {
+export function EditAnnouncementDialog({ author, announcement }) {
   const router = useRouter();
   const path = usePathname();
 
@@ -19,7 +19,7 @@ export function NewAnnouncementDialog({ user }) {
 
   function handleOpenChange(open) {
     if (open) {
-      router.replace("/announcement/new");
+      router.replace(`/announcement/${announcement.id}/edit`);
     } else {
       router.replace("/announcement");
     }
@@ -33,13 +33,20 @@ export function NewAnnouncementDialog({ user }) {
   }
 
   return (
-    <Dialog onOpenChange={handleOpenChange} open={path === "/announcement/new"}>
+    <Dialog
+      onOpenChange={handleOpenChange}
+      open={path === `/announcement/${announcement.id}/edit`}
+    >
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Buat pengumuman baru</DialogTitle>
+          <DialogTitle>Edit pengumuman</DialogTitle>
           <DialogDescription>Mohon isi setiap kolom dibawah</DialogDescription>
         </DialogHeader>
-        <NewAnnouncementForm user={user} onDataSaved={handleDataSaved} />
+        <EditAnnouncementForm
+          author={author}
+          announcement={announcement}
+          onDataSaved={handleDataSaved}
+        />
       </DialogContent>
     </Dialog>
   );

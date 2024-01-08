@@ -1,10 +1,12 @@
-import { formatTimestamp } from "@/lib/utils";
+import { cn, formatTimestamp } from "@/lib/utils";
 import {
   Card,
   CardContent,
   CardDescription,
   CardTitle,
 } from "@/components/ui/card";
+import Link from "next/link";
+import { buttonVariants } from "./ui/button";
 
 export function AnnouncementCard({ announcement, user }) {
   return (
@@ -13,8 +15,15 @@ export function AnnouncementCard({ announcement, user }) {
         <span className="text-xs text-slate-500">
           {formatTimestamp(announcement.published_at)}
         </span>
-        <CardTitle className="text-lg">{announcement.title}</CardTitle>
-        <CardDescription className="text-sm text-slate-900">
+        <CardTitle className="text-lg mt-1.5 leading-tight p-0">
+          <Link
+            href={`/announcement/${announcement.id}`}
+            className="hover:underline"
+          >
+            {announcement.title}
+          </Link>
+        </CardTitle>
+        <CardDescription className="text-sm text-slate-900 mt-1">
           {announcement.content}
         </CardDescription>
       </CardContent>
