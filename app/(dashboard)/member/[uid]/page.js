@@ -35,7 +35,7 @@ export default async function MemberPage({ params }) {
         <div>
           <h1 className="font-semibold text-4xl">{user.name}</h1>
           <p>
-            {user.nim} - {user.role}
+            {user.email} - {user.nim}
           </p>
         </div>
         <MemberToolbar user={user} />
