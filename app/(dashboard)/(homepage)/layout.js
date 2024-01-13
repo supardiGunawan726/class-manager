@@ -7,7 +7,10 @@ export default function Layout(props) {
         <Greeting />
       </header>
       <div className="grid grid-cols-[3fr_2fr] gap-8 mt-12">
-        <div>{props.children}</div>
+        <div className="grid gap-8">
+          {props.children}
+          {props.fund}
+        </div>
         <div>{props.announcement}</div>
       </div>
     </main>

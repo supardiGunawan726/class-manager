@@ -66,8 +66,8 @@ export function EditDocumentationForm({ user, documentation, onDataSaved }) {
       setStatus({ loading: true, success: false });
 
       const formData = new FormData(e.target);
-      formData.append("id", documentation.id);
-      formData.append("class_id", user.class_id);
+      formData.set("id", documentation.id);
+      formData.set("class_id", user.class_id);
 
       for (const media of selectedMedia) {
         // new file to be uploaded

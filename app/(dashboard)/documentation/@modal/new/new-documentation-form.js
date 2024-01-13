@@ -25,8 +25,8 @@ export function NewDocumentationForm({ user, onDataSaved }) {
       setStatus({ loading: true, success: false });
 
       const formData = new FormData(e.target);
-      formData.append("author", user.uid);
-      formData.append("class_id", user.class_id);
+      formData.set("author", user.uid);
+      formData.set("class_id", user.class_id);
 
       await uploadMedia(formData);
       onDataSaved();
