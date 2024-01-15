@@ -1,13 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,6 +10,7 @@ import { setUserData } from "@/lib/firebase/db/user";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import slugify from "slugify";
+import Image from "next/image";
 
 export function CreateClassForm({ uid }) {
   const router = useRouter();
@@ -63,8 +58,13 @@ export function CreateClassForm({ uid }) {
   return (
     <Card className="max-w-sm mx-auto mt-24">
       <CardHeader className="text-center">
-        <CardTitle>Class Manager</CardTitle>
-        <CardDescription>Buat kelas</CardDescription>
+        <Image
+          src="/images/logo.png"
+          width={300}
+          height={94}
+          className="mx-auto"
+        />
+        <CardTitle>Buat kelas</CardTitle>
       </CardHeader>
       <CardContent>
         <form className="grid w-full gap-3" onSubmit={handleFormSubmit}>

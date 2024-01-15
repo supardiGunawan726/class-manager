@@ -29,6 +29,7 @@ import { useRouter } from "next/navigation";
 import { setUserData } from "@/lib/firebase/db/user";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import * as Icon from "lucide-react";
+import Image from "next/image";
 
 export default function Register() {
   const router = useRouter();
@@ -102,8 +103,13 @@ export default function Register() {
   return (
     <Card className="max-w-sm mx-auto mt-24">
       <CardHeader className="text-center">
-        <CardTitle>Class Manager</CardTitle>
-        <CardDescription>Daftar</CardDescription>
+        <Image
+          src="/images/logo.png"
+          width={300}
+          height={94}
+          className="mx-auto"
+        />
+        <CardTitle>Daftar</CardTitle>
       </CardHeader>
       <CardContent>
         {error && (

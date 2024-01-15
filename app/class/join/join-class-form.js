@@ -14,6 +14,7 @@ import { joinClass } from "@/lib/firebase/db/class";
 import { useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import * as Icon from "lucide-react";
+import Image from "next/image";
 
 export function JoinClassForm({ uid }) {
   const [values, setValues] = useState({
@@ -51,8 +52,13 @@ export function JoinClassForm({ uid }) {
     return (
       <Card className="max-w-sm mx-auto mt-24">
         <CardHeader className="text-center">
-          <CardTitle>Class Manager</CardTitle>
-          <CardDescription>Permintaan gabung sudah terkirim!</CardDescription>
+          <Image
+            src="/images/logo.png"
+            width={300}
+            height={94}
+            className="mx-auto"
+          />
+          <CardTitle>Permintaan gabung sudah terkirim!</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="leading-7 [&:not(:first-child)]:mt-6 text-center">
@@ -67,7 +73,12 @@ export function JoinClassForm({ uid }) {
   return (
     <Card className="max-w-sm mx-auto mt-24">
       <CardHeader className="text-center">
-        <CardTitle>Class Manager</CardTitle>
+        <Image
+          src="/images/logo.png"
+          width={300}
+          height={94}
+          className="mx-auto"
+        />
         <CardDescription>Gabung kelas</CardDescription>
       </CardHeader>
       <CardContent>

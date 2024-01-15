@@ -21,6 +21,7 @@ import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import Link from "next/link";
 import * as Icon from "lucide-react";
+import Image from "next/image";
 
 export default function Login() {
   const router = useRouter();
@@ -86,8 +87,13 @@ export default function Login() {
   return (
     <Card className="max-w-sm mx-auto mt-24">
       <CardHeader className="text-center">
-        <CardTitle>Class Manager</CardTitle>
-        <CardDescription>Masuk</CardDescription>
+        <Image
+          src="/images/logo.png"
+          width={300}
+          height={94}
+          className="mx-auto"
+        />
+        <CardTitle>Masuk</CardTitle>
       </CardHeader>
       <CardContent>
         {error && (
