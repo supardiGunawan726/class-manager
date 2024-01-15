@@ -1,12 +1,16 @@
 import { unstable_cache } from "next/cache";
 import { headers } from "next/headers";
 import { getUserDataByUid } from "@/lib/firebase/admin/db/user";
-import { getUsersBillingByDate, getFund } from "@/lib/firebase/admin/db/fund";
+import {
+  getUsersBillingByPeriod,
+  getFund,
+  getBillingDateInterval,
+} from "@/lib/firebase/admin/db/fund";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { Timestamp } from "firebase-admin/firestore";
-import { BILLING_PERIODS } from "@/lib/utils";
-import { BillingTable } from "@/components/billings-table";
+import { parseDate } from "@/lib/utils";
+import { BillingTable, BillingToolbar } from "@/components/billing/table";
 
 const getCachedCurrentUser = unstable_cache(
   getUserDataByUid,
@@ -16,8 +20,8 @@ const getCachedCurrentUser = unstable_cache(
 
 const getCachedFund = unstable_cache(getFund, ["fund"], { tags: ["fund"] });
 
-const getCachedUsersBillingByDate = unstable_cache(
-  getUsersBillingByDate,
+const getCachedUsersBillingByPeriod = unstable_cache(
+  getUsersBillingByPeriod,
   ["billings"],
   { tags: ["billings"] }
 );
@@ -26,33 +30,20 @@ export default async function FundPage({ searchParams }) {
   const uid = headers().get("x-uid");
   const user = await getCachedCurrentUser(uid);
   const fund = await getCachedFund(user.class_id).catch(() => null);
+  const billingDateInterval = getBillingDateInterval(fund);
 
-  const from = new Timestamp(
-    fund.billing_start_date._seconds,
-    fund.billing_start_date._nanoseconds
-  );
-  const toDate = new Date(from.toDate());
-
-  switch (fund.billing_period) {
-    case BILLING_PERIODS.DAILY.value:
-      toDate.setDate(toDate.getDate() + 1);
-      break;
-    case BILLING_PERIODS.WEEKLY.value:
-      toDate.setDate(toDate.getDate() + 7);
-      break;
-    case BILLING_PERIODS.FORTNIGHTLY.value:
-      toDate.setDate(toDate.getDate() + 14);
-      break;
-    case BILLING_PERIODS.MONTHLY.value:
-      toDate.setMonth(toDate.getMonth() + 1);
-      break;
+  let datePeriod = billingDateInterval[billingDateInterval.length - 1];
+  if (searchParams.date) {
+    try {
+      const parsedDate = parseDate(searchParams.date);
+      datePeriod = Timestamp.fromDate(parsedDate);
+    } catch (error) {}
   }
 
-  const to = Timestamp.fromDate(toDate);
-
-  const billings = await getCachedUsersBillingByDate(user.class_id, {
-    from,
-    to,
+  const billings = await getCachedUsersBillingByPeriod(user.class_id, {
+    fund,
+    datePeriod,
+    billingDateInterval,
   });
 
   return (
@@ -84,7 +75,15 @@ export default async function FundPage({ searchParams }) {
             </p>
           </div>
         )}
-        {fund && billings.length > 0 && <BillingTable billings={billings} />}
+        {fund && billings.length > 0 && (
+          <section className="grid gap-4">
+            <BillingToolbar
+              user={user}
+              billingDateInterval={billingDateInterval}
+            />
+            <BillingTable billings={billings} />
+          </section>
+        )}
       </div>
     </main>
   );
