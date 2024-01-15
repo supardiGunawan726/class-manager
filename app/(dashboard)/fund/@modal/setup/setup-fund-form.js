@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { DatePicker } from "./date-picker";
+import { DatePicker } from "../../../../../components/date-picker";
 import { setupFund } from "./actions";
 import { BILLING_PERIODS } from "@/lib/utils";
 

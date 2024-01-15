@@ -19,6 +19,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -26,13 +27,13 @@ import { useRouter, useSearchParams } from "next/navigation";
 export function BillingToolbar({ billingDateInterval, user }) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const billingDateSearchParam = searchParams.get("date");
 
-  const dateSearchParams = searchParams.get("date");
-  const dateValue = dateSearchParams
-    ? dateSearchParams
+  const billingDate = billingDateSearchParam
+    ? billingDateSearchParam
     : formatTimestamp(billingDateInterval[billingDateInterval.length - 1]);
 
-  function handleDateChange(value) {
+  function handleBillingDateChange(value) {
     const searchParams = new URLSearchParams(window.location.search);
     searchParams.set("date", value);
     router.replace(`/fund?${searchParams.toString()}`);
@@ -45,30 +46,46 @@ export function BillingToolbar({ billingDateInterval, user }) {
         name="search"
         id="search"
         placeholder="Cari nama mahasiswa"
-        className="w-[276px]"
+        className="w-[200px]"
       />
-      <Select value={dateValue} onValueChange={handleDateChange}>
-        <SelectTrigger className="w-[180px] ml-2">{dateValue}</SelectTrigger>
+      <Select
+        defaultValue={billingDate}
+        onValueChange={handleBillingDateChange}
+      >
+        <SelectTrigger className="w-[180px] ml-2">
+          <SelectValue />
+        </SelectTrigger>
         <SelectContent>
-          {billingDateInterval.map((billingDate) => (
+          {billingDateInterval.map((billingDateOption) => (
             <SelectItem
-              key={formatTimestamp(billingDate)}
-              value={formatTimestamp(billingDate)}
+              key={formatTimestamp(billingDateOption)}
+              value={formatTimestamp(billingDateOption)}
             >
-              {formatTimestamp(billingDate)}
+              {formatTimestamp(billingDateOption)}
             </SelectItem>
           ))}
         </SelectContent>
       </Select>
       {user && user.role === "ketua" && (
-        <Link
-          href="/fund/transaction/new"
-          className={cn(buttonVariants({ variant: "outline" }), "ml-auto")}
-        >
-          Input data uang kas
-        </Link>
+        <>
+          <Link
+            href="/fund/transaction"
+            className={cn(buttonVariants({ variant: "outline" }), "ml-auto")}
+          >
+            Lihat data transaksi
+          </Link>
+          <Link
+            href={`/fund/transaction/new?billing_date=${billingDate}`}
+            className={cn(buttonVariants({ variant: "destructive" }), "ml-2")}
+          >
+            Input uang kas
+          </Link>
+        </>
       )}
-      <Link href="/fund/pay" className={cn(buttonVariants(), "ml-2")}>
+      <Link
+        href={`/fund/pay?billing_date=${billingDate}`}
+        className={cn(buttonVariants(), "ml-2")}
+      >
         Bayar uang kas
       </Link>
     </header>
