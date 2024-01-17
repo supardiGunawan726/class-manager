@@ -5,11 +5,9 @@ import { MemberToolbar } from "./member-toolbar";
 import { Separator } from "@/components/ui/separator";
 import { unstable_cache } from "next/cache";
 
-const getCachedCurrentUser = unstable_cache(
-  getUserDataByUid,
-  ["current-user"],
-  { tags: ["current-user"] }
-);
+const getCachedUser = unstable_cache(getUserDataByUid, ["user"], {
+  tags: ["user"],
+});
 
 export default async function MemberPage({ params }) {
   const { uid } = params;
@@ -18,7 +16,7 @@ export default async function MemberPage({ params }) {
     return notFound();
   }
 
-  const user = await getCachedCurrentUser(uid);
+  const user = await getCachedUser(uid);
 
   if (!user) {
     return notFound();

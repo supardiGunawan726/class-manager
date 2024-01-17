@@ -1,18 +1,11 @@
 import { AnnouncementCard } from "@/components/announcement";
 import { getAnnouncements } from "@/lib/firebase/admin/db/announcement";
 import { unstable_cache } from "next/cache";
-import { headers } from "next/headers";
-import { getUserDataByUid } from "@/lib/firebase/admin/db/user";
+import { getCurrentUser } from "@/lib/firebase/admin/db/user";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
-
-const getCachedCurrentUser = unstable_cache(
-  getUserDataByUid,
-  ["current-user"],
-  { tags: ["current-user"] }
-);
 
 const getCachedAllAnnouncements = unstable_cache(
   getAnnouncements,
@@ -21,8 +14,7 @@ const getCachedAllAnnouncements = unstable_cache(
 );
 
 export default async function AnnouncementPage() {
-  const uid = headers().get("x-uid");
-  const user = await getCachedCurrentUser(uid);
+  const user = await getCurrentUser();
 
   const announcements = await getCachedAllAnnouncements(user.class_id, 50);
 
@@ -51,15 +43,24 @@ export default async function AnnouncementPage() {
             </>
           )}
         </header>
-        <div className="mt-4 grid grid-cols-3 gap-4">
-          {announcements.map((announcement) => (
-            <AnnouncementCard
-              key={announcement.id}
-              announcement={announcement}
-              user={user}
-            />
-          ))}
-        </div>
+        {announcements.length < 1 && (
+          <div className="mt-4 flex flex-col items-center justify-center gap-4 min-h-[500px]">
+            <p className="text-sm text-slate-500 text-center">
+              Belum ada pengumuman
+            </p>
+          </div>
+        )}
+        {announcements.length > 0 && (
+          <div className="mt-4 grid grid-cols-3 gap-4">
+            {announcements.map((announcement) => (
+              <AnnouncementCard
+                key={announcement.id}
+                announcement={announcement}
+                user={user}
+              />
+            ))}
+          </div>
+        )}
       </section>
     </main>
   );

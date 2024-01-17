@@ -6,8 +6,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { unstable_cache } from "next/cache";
-import { headers } from "next/headers";
-import { getUserDataByUid } from "@/lib/firebase/admin/db/user";
+import { getCurrentUser } from "@/lib/firebase/admin/db/user";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import {
@@ -18,12 +17,6 @@ import {
 import { BillingTable } from "@/components/billing/table";
 import { formatTimestamp } from "@/lib/utils";
 
-const getCachedCurrentUser = unstable_cache(
-  getUserDataByUid,
-  ["current-user"],
-  { tags: ["current-user"] }
-);
-
 const getCachedFund = unstable_cache(getFund, ["fund"], { tags: ["fund"] });
 
 const getCachedUsersBillingByPeriod = unstable_cache(
@@ -33,16 +26,19 @@ const getCachedUsersBillingByPeriod = unstable_cache(
 );
 
 export default async function PettyCashPage() {
-  const uid = headers().get("x-uid");
-  const user = await getCachedCurrentUser(uid);
+  const user = await getCurrentUser();
   const fund = await getCachedFund(user.class_id).catch(() => null);
-  const billingDateInterval = getBillingDateInterval(fund);
-  const datePeriod = billingDateInterval[billingDateInterval.length - 1];
-  const billings = await getCachedUsersBillingByPeriod(user.class_id, {
-    fund,
-    datePeriod,
-    billingDateInterval,
-  });
+  const billingDateInterval = fund ? getBillingDateInterval(fund) : null;
+  const datePeriod = billingDateInterval
+    ? billingDateInterval[billingDateInterval.length - 1]
+    : null;
+  const billings = billingDateInterval
+    ? await getCachedUsersBillingByPeriod(user.class_id, {
+        fund,
+        datePeriod,
+        billingDateInterval,
+      })
+    : null;
 
   return (
     <Card>

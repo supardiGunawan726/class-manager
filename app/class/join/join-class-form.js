@@ -10,33 +10,30 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { joinClass } from "@/lib/firebase/db/class";
 import { useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import * as Icon from "lucide-react";
 import Image from "next/image";
+import { joinClass } from "../actions";
 
-export function JoinClassForm({ uid }) {
-  const [values, setValues] = useState({
-    id: "",
-  });
+export function JoinClassForm({ user }) {
   const [status, setStatus] = useState({
     loading: false,
     done: false,
     error: null,
   });
 
-  function handleInputChange(e) {
-    const { id, value } = e.target;
-    setValues((prev) => ({ ...prev, [id]: value }));
-  }
-
   async function handleFormSubmit(e) {
     e.preventDefault();
 
-    setStatus({ loading: true, done: false, error: null });
     try {
-      await joinClass(uid, values.id);
+      setStatus({ loading: true, done: false, error: null });
+
+      const formData = new FormData(e.target);
+      formData.set("uid", user.uid);
+
+      await joinClass(formData);
+
       setStatus({ loading: false, done: true, error: null });
     } catch (error) {
       console.error(error);
@@ -90,13 +87,12 @@ export function JoinClassForm({ uid }) {
         )}
         <form className="grid w-full gap-3" onSubmit={handleFormSubmit}>
           <div className="grid w-full max-w-sm items-center gap-2">
-            <Label htmlFor="id">ID kelas</Label>
+            <Label htmlFor="class_id">ID kelas</Label>
             <Input
-              id="id"
+              id="class_id"
+              name="class_id"
               type="text"
               placeholder="ID kelas"
-              value={values.id}
-              onChange={handleInputChange}
             />
           </div>
           <div className="grid w-full max-w-sm items-center gap-2 mt-4">

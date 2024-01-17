@@ -1,18 +1,11 @@
 import { unstable_cache } from "next/cache";
-import { headers } from "next/headers";
-import { getUserDataByUid } from "@/lib/firebase/admin/db/user";
+import { getCurrentUser } from "@/lib/firebase/admin/db/user";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { DiscussionList } from "./discussion-list";
 import { getAllDiscussions } from "@/lib/firebase/admin/db/discussion";
-
-const getCachedCurrentUser = unstable_cache(
-  getUserDataByUid,
-  ["current-user"],
-  { tags: ["current-user"] }
-);
 
 const getCachedAllDiscussions = unstable_cache(
   getAllDiscussions,
@@ -21,8 +14,7 @@ const getCachedAllDiscussions = unstable_cache(
 );
 
 export default async function DiscussionPage() {
-  const uid = headers().get("x-uid");
-  const user = await getCachedCurrentUser(uid);
+  const user = await getCurrentUser();
   const discussions = await getCachedAllDiscussions(user.class_id);
 
   return (

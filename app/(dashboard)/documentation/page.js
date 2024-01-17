@@ -1,18 +1,11 @@
 import { Input } from "@/components/ui/input";
 import { unstable_cache } from "next/cache";
-import { headers } from "next/headers";
-import { getUserDataByUid } from "@/lib/firebase/admin/db/user";
+import { getCurrentUser } from "@/lib/firebase/admin/db/user";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import { DocumentationList } from "./documentation-list";
 import { getAllDocumentations } from "@/lib/firebase/admin/db/documentation";
-
-const getCachedCurrentUser = unstable_cache(
-  getUserDataByUid,
-  ["current-user"],
-  { tags: ["current-user"] }
-);
 
 const getCachedAllDocumentations = unstable_cache(
   getAllDocumentations,
@@ -21,8 +14,7 @@ const getCachedAllDocumentations = unstable_cache(
 );
 
 export default async function DocumentationPage() {
-  const uid = headers().get("x-uid");
-  const user = await getCachedCurrentUser(uid);
+  const user = await getCurrentUser();
 
   const documentations = await getCachedAllDocumentations(user.class_id);
 

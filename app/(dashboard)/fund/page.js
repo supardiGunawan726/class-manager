@@ -1,6 +1,5 @@
 import { unstable_cache } from "next/cache";
-import { headers } from "next/headers";
-import { getUserDataByUid } from "@/lib/firebase/admin/db/user";
+import { getCurrentUser } from "@/lib/firebase/admin/db/user";
 import {
   getUsersBillingByPeriod,
   getFund,
@@ -12,12 +11,6 @@ import { Timestamp } from "firebase-admin/firestore";
 import { parseDate } from "@/lib/utils";
 import { BillingTable, BillingToolbar } from "@/components/billing/table";
 
-const getCachedCurrentUser = unstable_cache(
-  getUserDataByUid,
-  ["current-user"],
-  { tags: ["current-user"] }
-);
-
 const getCachedFund = unstable_cache(getFund, ["fund"], { tags: ["fund"] });
 
 const getCachedUsersBillingByPeriod = unstable_cache(
@@ -27,12 +20,13 @@ const getCachedUsersBillingByPeriod = unstable_cache(
 );
 
 export default async function FundPage({ searchParams }) {
-  const uid = headers().get("x-uid");
-  const user = await getCachedCurrentUser(uid);
+  const user = await getCurrentUser();
   const fund = await getCachedFund(user.class_id).catch(() => null);
-  const billingDateInterval = getBillingDateInterval(fund);
+  const billingDateInterval = fund ? getBillingDateInterval(fund) : null;
 
-  let datePeriod = billingDateInterval[billingDateInterval.length - 1];
+  let datePeriod = billingDateInterval
+    ? billingDateInterval[billingDateInterval.length - 1]
+    : null;
   if (searchParams.date) {
     try {
       const parsedDate = parseDate(searchParams.date);
@@ -40,11 +34,13 @@ export default async function FundPage({ searchParams }) {
     } catch (error) {}
   }
 
-  const billings = await getCachedUsersBillingByPeriod(user.class_id, {
-    fund,
-    datePeriod,
-    billingDateInterval,
-  });
+  const billings = billingDateInterval
+    ? await getCachedUsersBillingByPeriod(user.class_id, {
+        fund,
+        datePeriod,
+        billingDateInterval,
+      })
+    : null;
 
   return (
     <main className="px-12 pt-10">

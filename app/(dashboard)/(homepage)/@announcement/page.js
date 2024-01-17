@@ -1,15 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getAnnouncements } from "@/lib/firebase/admin/db/announcement";
 import { unstable_cache } from "next/cache";
-import { headers } from "next/headers";
-import { getUserDataByUid } from "@/lib/firebase/admin/db/user";
+import { getCurrentUser } from "@/lib/firebase/admin/db/user";
 import { AnnouncementCard } from "@/components/announcement";
-
-const getCachedCurrentUser = unstable_cache(
-  getUserDataByUid,
-  ["current-user"],
-  { tags: ["current-user"] }
-);
 
 const getCachedAllAnnouncements = unstable_cache(
   getAnnouncements,
@@ -18,9 +11,7 @@ const getCachedAllAnnouncements = unstable_cache(
 );
 
 export default async function Announcement() {
-  const uid = headers().get("x-uid");
-  const user = await getCachedCurrentUser(uid);
-
+  const user = await getCurrentUser();
   const announcements = await getCachedAllAnnouncements(user.class_id);
   return (
     <Card>

@@ -1,22 +1,27 @@
-import { getUserDataByUid } from "@/lib/firebase/admin/db/user";
+import { getCurrentUser } from "@/lib/firebase/admin/db/user";
 import { AuthProvider } from "./auth-provider";
 import { Sidebar } from "./sidebar";
 import { UserClassProvider } from "./user-class-provider";
 import { getClassById } from "@/lib/firebase/admin/db/class";
-import { headers } from "next/headers";
-import { unstable_cache } from "next/cache";
-
-const getCachedCurrentUser = unstable_cache(
-  getUserDataByUid,
-  ["current-user"],
-  { tags: ["current-user"] }
-);
+import { redirect } from "next/navigation";
 
 export default async function DashboardLayout({ children }) {
-  const uid = headers().get("x-uid");
-  const user = await getCachedCurrentUser(uid);
+  const user = await getCurrentUser().catch(() => null);
+
+  if (!user) {
+    redirect("/auth/login");
+  }
+
   const userClass =
     user && user.class_id ? await getClassById(user.class_id) : null;
+
+  if (!userClass) {
+    if (user.role === "ketua") {
+      redirect("/class/create");
+    } else {
+      redirect("/class/join");
+    }
+  }
 
   return (
     <AuthProvider auth={user}>

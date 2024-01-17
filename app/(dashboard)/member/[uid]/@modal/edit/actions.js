@@ -2,7 +2,6 @@
 
 import { setUserData } from "@/lib/firebase/admin/db/user";
 import { cleanUndefined } from "@/lib/utils";
-import { revalidateTag } from "next/cache";
 
 export async function saveData(data) {
   await setUserData(
@@ -13,5 +12,4 @@ export async function saveData(data) {
       nim: data.nim,
     })
   );
-  revalidateTag("current-user");
 }

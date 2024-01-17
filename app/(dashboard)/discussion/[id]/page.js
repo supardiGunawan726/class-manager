@@ -1,17 +1,10 @@
-import { revalidateTag, unstable_cache } from "next/cache";
-import { headers } from "next/headers";
+import { unstable_cache } from "next/cache";
 import {
-  getUserDataByUid,
+  getCurrentUser,
   getUsersDataByClassId,
 } from "@/lib/firebase/admin/db/user";
 import { getDiscussion } from "@/lib/firebase/admin/db/discussion";
 import { DiscussionRoom } from "./discussion-room";
-
-const getCachedCurrentUser = unstable_cache(
-  getUserDataByUid,
-  ["current-user"],
-  { tags: ["current-user"] }
-);
 
 const getCachedUsersDataByClassId = unstable_cache(
   getUsersDataByClassId,
@@ -24,10 +17,8 @@ const getCachedDiscussion = unstable_cache(getDiscussion, ["discussion"], {
 });
 
 export default async function DiscussionRoomPage({ params }) {
-  const uid = headers().get("x-uid");
-  const user = await getCachedCurrentUser(uid);
+  const user = await getCurrentUser();
   const users = await getCachedUsersDataByClassId(user.class_id);
-
   const discussion = await getCachedDiscussion(user.class_id, params.id);
 
   return (
