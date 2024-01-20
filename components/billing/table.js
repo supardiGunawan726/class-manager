@@ -114,9 +114,16 @@ export function BillingTable({ billings, simple }) {
           <TableRow key={billing.name}>
             <TableCell>{billing.name}</TableCell>
             <TableCell>
-              {billing.last_transaction_date
-                ? formatTimestamp(billing.last_transaction_date)
-                : "-"}
+              {billing.last_transaction ? (
+                <Link
+                  href={`/fund/transaction/${billing.last_transaction.id}`}
+                  className="hover:underline"
+                >
+                  {formatTimestamp(billing.last_transaction.date)}
+                </Link>
+              ) : (
+                "-"
+              )}
             </TableCell>
             {!simple && (
               <TableCell>

@@ -17,23 +17,26 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import * as Icon from "lucide-react";
-import { approveJoinRequest, deleteJoinRequest } from "@/lib/firebase/db/class";
-import { useRouter } from "next/navigation";
+import { approveJoinRequest, declineJoinRequest } from "./actions";
 
-export function JoinRequestTable({ classId, classJoinRequests }) {
-  const router = useRouter();
-
+export function JoinRequestTable({ user, userClassJoinRequests }) {
   function handleRejectJoinRequest(uid) {
     return async () => {
-      await deleteJoinRequest(uid, classId);
-      router.refresh();
+      const formData = new FormData();
+      formData.set("uid", uid);
+      formData.set("class_id", user.class_id);
+
+      await declineJoinRequest(formData);
     };
   }
 
   function handleApproveJoinRequest(uid) {
     return async () => {
-      await approveJoinRequest(uid, classId);
-      router.refresh();
+      const formData = new FormData();
+      formData.set("uid", uid);
+      formData.set("class_id", user.class_id);
+
+      await approveJoinRequest(formData);
     };
   }
 
@@ -49,7 +52,7 @@ export function JoinRequestTable({ classId, classJoinRequests }) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {classJoinRequests.map((user) => (
+        {userClassJoinRequests.map((user) => (
           <TableRow key={user.uid}>
             <TableCell>{user.name}</TableCell>
             <TableCell>{user.email}</TableCell>

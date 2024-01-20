@@ -4,10 +4,17 @@ import * as Icon from "lucide-react";
 import { MemberToolbar } from "./member-toolbar";
 import { Separator } from "@/components/ui/separator";
 import { unstable_cache } from "next/cache";
+import { getTransactionsByUserId } from "@/lib/firebase/admin/db/fund";
+import { UserTransactionTable } from "./user-transaction-table";
 
 const getCachedUser = unstable_cache(getUserDataByUid, ["user"], {
   tags: ["user"],
 });
+const getCachedTransactionsByUserId = unstable_cache(
+  getTransactionsByUserId,
+  ["user-transactions"],
+  { tags: ["user-transactions"] }
+);
 
 export default async function MemberPage({ params }) {
   const { uid } = params;
@@ -21,6 +28,11 @@ export default async function MemberPage({ params }) {
   if (!user) {
     return notFound();
   }
+
+  const transactions = await getCachedTransactionsByUserId(
+    user.class_id,
+    user.uid
+  );
 
   return (
     <main className="px-12 pt-10">
@@ -39,6 +51,7 @@ export default async function MemberPage({ params }) {
         <MemberToolbar user={user} />
       </header>
       <Separator className="my-6" />
+      <UserTransactionTable transactions={transactions} />
     </main>
   );
 }

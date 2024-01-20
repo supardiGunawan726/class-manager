@@ -1,15 +1,19 @@
-import { headers } from "next/headers";
-import { getClassById } from "@/lib/firebase/admin/db/class";
 import {
   getCurrentUser,
-  getUsersDataByUids,
+  getUsersDataByClassId,
 } from "@/lib/firebase/admin/db/user";
 import { MemberTable, MemberTableToolbar } from "./member-table";
+import { unstable_cache } from "next/cache";
+
+const getCachedUsersDataByClassId = unstable_cache(
+  getUsersDataByClassId,
+  ["users"],
+  { tags: ["users"] }
+);
 
 export default async function MemberPage() {
   const user = await getCurrentUser();
-  const userClass = await getClassById(user.class_id);
-  const userClassMembers = await getUsersDataByUids(userClass.member);
+  const userClassMembers = await getCachedUsersDataByClassId(user.class_id);
 
   return (
     <main className="px-12 pt-10">
@@ -19,10 +23,7 @@ export default async function MemberPage() {
       <div className="mt-12">
         <MemberTableToolbar />
         <div className="mt-4">
-          <MemberTable
-            userClassId={user.class_id}
-            userClassMembers={userClassMembers}
-          />
+          <MemberTable currentUser={user} userClassMembers={userClassMembers} />
         </div>
       </div>
     </main>

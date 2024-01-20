@@ -1,6 +1,6 @@
 import { auth } from "@/lib/firebase/firebase-admin-config";
 import { cookies } from "next/headers";
-import { NextResponse } from "next/server";
+import { redirect } from "next/navigation";
 
 export async function POST(request) {
   const session = cookies().get("session")?.value || "";
@@ -17,5 +17,5 @@ export async function POST(request) {
     return auth.revokeRefreshTokens(decodedClaims.sub);
   });
 
-  return NextResponse.json({}, { status: 200 });
+  redirect("/auth/login");
 }

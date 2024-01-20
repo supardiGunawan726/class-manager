@@ -18,21 +18,20 @@ import {
 import * as Icon from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { deleteClassMember } from "@/lib/firebase/db/class";
-import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuthContext } from "../auth-provider";
+import { removeClassMember } from "./actions";
 
-export function MemberTable({ userClassId, userClassMembers }) {
-  const router = useRouter();
-  const user = useAuthContext();
-
+export function MemberTable({ currentUser, userClassMembers }) {
   function deleteMember(uid) {
     return async () => {
-      await deleteClassMember(uid, userClassId);
-      router.refresh();
+      const formData = new FormData();
+      formData.set("class_id", currentUser.class_id);
+      formData.set("uid", uid);
+
+      await removeClassMember(formData);
     };
   }
 
@@ -67,7 +66,7 @@ export function MemberTable({ userClassId, userClassMembers }) {
                   <DropdownMenuItem asChild>
                     <Link href={`/member/${member.uid}`}>Lihat</Link>
                   </DropdownMenuItem>
-                  {user.role === "ketua" && (
+                  {currentUser.role === "ketua" && (
                     <DropdownMenuItem onClick={deleteMember(member.uid)}>
                       Hapus
                     </DropdownMenuItem>

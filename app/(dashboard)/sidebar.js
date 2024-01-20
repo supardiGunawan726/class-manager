@@ -1,9 +1,10 @@
+import { Button } from "@/components/ui/button";
 import * as Icon from "lucide-react";
 import Link from "next/link";
 
 export function Sidebar({ user, userClass }) {
   return (
-    <aside className="min-h-screen bg-foreground text-background p-8">
+    <aside className="min-h-screen bg-foreground text-background p-8 flex flex-col">
       <header className="flex gap-4 items-center">
         <div className="bg-slate-700 w-14 h-14 grid place-items-center rounded-full">
           <Icon.User />
@@ -51,6 +52,18 @@ export function Sidebar({ user, userClass }) {
           <span>Utilitas</span>
         </Link>
       </nav>
+      <footer className="mt-auto pl-1">
+        <form action="/api/auth/logout" method="post">
+          <Button
+            variant="ghost"
+            href="/api/auth/logout"
+            className="flex items-center gap-6 p-0 hover:bg-transparent hover:text-background"
+          >
+            <Icon.LogOut className="-scale-100" />
+            Logout
+          </Button>
+        </form>
+      </footer>
     </aside>
   );
 }

@@ -15,6 +15,7 @@ import { useState } from "react";
 import { DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { unverifyTransactions, verifyTransactions } from "./actions";
+import Link from "next/link";
 
 export function TransactionTable({ transactions, user, users, onDataChanged }) {
   const [checks, setChecks] = useState(
@@ -139,7 +140,14 @@ export function TransactionTable({ transactions, user, users, onDataChanged }) {
                 </div>
               </TableCell>
               <TableCell>{findUser(transaction.user_id).name}</TableCell>
-              <TableCell>{formatTimestamp(transaction.date)}</TableCell>
+              <TableCell>
+                <Link
+                  href={`/fund/transaction/${transaction.id}`}
+                  className="hover:underline"
+                >
+                  {formatTimestamp(transaction.date)}
+                </Link>
+              </TableCell>
               <TableCell>{idrFormatter.format(transaction.amount)}</TableCell>
               <TableCell>{formatTimestamp(transaction.billing_date)}</TableCell>
               <TableCell>

@@ -47,14 +47,14 @@ export default function Register() {
       formData.set("id_token", idToken);
       formData.set("uid", userCred.user.uid);
 
+      await createSessionCookie(formData);
+      await saveUserData(formData);
+
       if (formData.get("role") === "ketua") {
         router.replace(`/class/create`);
       } else {
         router.replace(`/class/join`);
       }
-
-      await createSessionCookie(formData);
-      await saveUserData(formData);
 
       setStatus({ loading: false, success: true, error: null });
     } catch (error) {
@@ -62,42 +62,6 @@ export default function Register() {
       setStatus({ loading: false, success: false, error: error.message });
     }
   }
-
-  // useEffect(() => {
-  //   const unsubscribe = onAuthStateChanged(auth, async function (user) {
-  //     if (!user) return;
-
-  //     const idToken = await getIdToken(user, true);
-  //     await fetch("/api/auth/login", {
-  //       method: "POST",
-  //       headers: {
-  //         Authorization: `Bearer ${idToken}`,
-  //       },
-  //     });
-  //     await fetch("/api/auth/custom-claims", {
-  //       method: "POST",
-  //       headers: {
-  //         Authorization: `Bearer ${idToken}`,
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         role: values.role,
-  //       }),
-  //     });
-  //     await setUserData(user.uid, {
-  //       name: values.fullname,
-  //       nim: parseInt(values.nim, 10),
-  //     });
-  //     const idTokenResult = await user.getIdTokenResult(true);
-  //     if (idTokenResult.claims.role === "ketua") {
-  //       router.push(`/class/create?uid=${user.uid}`);
-  //     } else {
-  //       router.push(`/class/join?uid=${user.uid}`);
-  //     }
-  //   });
-
-  //   return unsubscribe;
-  // }, [values]);
 
   return (
     <Card className="max-w-sm mx-auto mt-24">

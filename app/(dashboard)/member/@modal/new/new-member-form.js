@@ -6,19 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import * as Icon from "lucide-react";
-import { useUserClassContext } from "@/app/(dashboard)/user-class-provider";
 import { addClassMember } from "@/lib/firebase/db/class";
 import { setUserData } from "@/lib/firebase/db/user";
+import { addMember } from "./actions";
 
-export function NewMemberForm({ onUserCreated }) {
-  const userClass = useUserClassContext();
-
-  const [values, setValues] = useState({
-    fullname: "",
-    email: "",
-    nim: "",
-    password: "",
-  });
+export function NewMemberForm({ currentUser, onUserCreated }) {
   const [status, setStatus] = useState({
     loading: false,
     success: false,
@@ -36,53 +28,19 @@ export function NewMemberForm({ onUserCreated }) {
     try {
       setStatus({ loading: true, success: false, error: null });
 
-      const getUserDataResult = await fetch(`/api/user/${values.email}`);
-      const getUserDataBody = await getUserDataResult.json();
+      const formData = new FormData(e.target);
+      formData.set("class_id", currentUser.class_id);
+      const user = await addMember(formData);
 
-      let user = getUserDataBody?.data?.user;
-
-      if (!user) {
-        const createUserResult = await fetch("/api/user", {
-          method: "post",
-          body: JSON.stringify({
-            name: values.fullname,
-            email: values.email,
-            nim: parseInt(values.nim),
-            password: values.password,
-          }),
-        });
-        const createUserBody = await createUserResult.json();
-        user = createUserBody?.data?.user;
-      }
-
-      if (!user) {
-        throw new Error("Error creating user");
-      }
-
-      if (user.class_id) {
-        throw new Error("User has join other class");
-      }
-
-      await fetch("/api/auth/user-role", {
-        method: "post",
-        body: JSON.stringify({
-          uid: user.uid,
-          role: "anggota",
-        }),
-      });
-      await addClassMember(user.uid, userClass.id);
-      await setUserData(user.uid, {
-        class_id: userClass.id,
-      });
-      setStatus({ loading: false, success: true, error: null });
       onUserCreated({
         uid: user.uid,
-        name: values.fullname,
-        email: values.email,
-        nim: parseInt(values.nim),
-        password: values.password,
-        class_id: userClass.id,
+        name: user.name,
+        email: user.email,
+        nim: user.nim,
+        password: formData.get("password"),
+        class_id: user.class_id,
       });
+      setStatus({ loading: false, success: true, error: null });
     } catch (error) {
       console.error(error);
       setStatus({ loading: false, success: false, error: null });
@@ -92,16 +50,15 @@ export function NewMemberForm({ onUserCreated }) {
   return (
     <form className="mt-4 grid gap-4" onSubmit={handleFormSubmit}>
       <div className="grid grid-cols-4 w-full max-w-sm items-center gap-4">
-        <Label htmlFor="fullname" className="text-right">
+        <Label htmlFor="name" className="text-right">
           Nama
         </Label>
         <Input
-          id="fullname"
+          id="name"
+          name="name"
           type="text"
           placeholder="Masukan nama lengkap"
           className="col-span-3"
-          value={values.fullname}
-          onChange={handleInputChange}
           disabled={status.loading}
           required
         />
@@ -112,11 +69,10 @@ export function NewMemberForm({ onUserCreated }) {
         </Label>
         <Input
           id="email"
+          name="email"
           type="email"
           placeholder="Masukan email"
           className="col-span-3"
-          value={values.email}
-          onChange={handleInputChange}
           disabled={status.loading}
           required
         />
@@ -127,11 +83,10 @@ export function NewMemberForm({ onUserCreated }) {
         </Label>
         <Input
           id="nim"
+          name="nim"
           type="number"
           placeholder="Masukan NIM"
           className="col-span-3"
-          value={values.nim}
-          onChange={handleInputChange}
           disabled={status.loading}
           required
         />
@@ -142,11 +97,10 @@ export function NewMemberForm({ onUserCreated }) {
         </Label>
         <Input
           id="password"
+          name="password"
           type="password"
           placeholder="Masukan kata sandi"
           className="col-span-3"
-          value={values.password}
-          onChange={handleInputChange}
           disabled={status.loading}
           required
         />
