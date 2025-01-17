@@ -44,7 +44,7 @@ export default function Login() {
 
       router.replace("/");
     } catch (err) {
-      console.error(err);
+      console.dir(err);
 
       let error;
       if (err.message.includes("missing-password")) {

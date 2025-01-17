@@ -16,7 +16,8 @@ const getCachedDiscussion = unstable_cache(getDiscussion, ["discussion"], {
   tags: ["discussion"],
 });
 
-export default async function DiscussionRoomPage({ params }) {
+export default async function DiscussionRoomPage(props) {
+  const params = await props.params;
   const user = await getCurrentUser();
   const users = await getCachedUsersDataByClassId(user.class_id);
   const discussion = await getCachedDiscussion(user.class_id, params.id);

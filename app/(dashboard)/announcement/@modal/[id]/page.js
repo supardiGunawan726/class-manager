@@ -16,7 +16,8 @@ const getCachedAnnouncementAuthor = unstable_cache(
   { tags: ["announcement", "announcement-author"] }
 );
 
-export default async function AnnouncementPage({ params }) {
+export default async function AnnouncementPage(props) {
+  const params = await props.params;
   const user = await getCurrentUser();
   const annoucement = await getCachedAnnouncementById(user.class_id, params.id);
   const annoucementAuthor = await getCachedAnnouncementAuthor(

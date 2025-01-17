@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/firebase/firebase-admin-config";
 
 export async function POST(request, response) {
-  const authorization = headers().get("Authorization");
+  const authorization = (await headers()).get("Authorization");
   if (authorization?.startsWith("Bearer ")) {
     const idToken = authorization.split("Bearer ")[1];
     const decodedToken = await auth.verifyIdToken(idToken);

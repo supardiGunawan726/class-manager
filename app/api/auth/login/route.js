@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 
 export async function POST(request, response) {
   try {
-    const authorization = headers().get("Authorization");
+    const authorization = (await headers()).get("Authorization");
     const idToken = authorization.split("Bearer ")[1];
 
     if (!idToken) {
@@ -31,7 +31,7 @@ export async function POST(request, response) {
       secure: true,
     };
     //Add the cookie to the browser
-    cookies().set(options);
+    (await cookies()).set(options);
 
     return NextResponse.json({}, { status: 200 });
   } catch (error) {
@@ -40,7 +40,7 @@ export async function POST(request, response) {
 }
 
 export async function GET(request) {
-  const session = cookies().get("session")?.value || "";
+  const session = (await cookies()).get("session")?.value || "";
 
   //Validate if the cookie exist in the request
   if (!session) {

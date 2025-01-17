@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 export async function POST(request) {
-  const session = cookies().get("session")?.value || "";
+  const session = (await cookies()).get("session")?.value || "";
 
   //Remove the value and expire the cookie
   const options = {
@@ -11,7 +11,7 @@ export async function POST(request) {
     value: "",
     maxAge: -1,
   };
-  cookies().set(options);
+  (await cookies()).set(options);
 
   auth.verifySessionCookie(session).then((decodedClaims) => {
     return auth.revokeRefreshTokens(decodedClaims.sub);

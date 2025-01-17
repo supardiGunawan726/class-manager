@@ -19,7 +19,8 @@ const getCachedUsersBillingByPeriod = unstable_cache(
   { tags: ["billings"] }
 );
 
-export default async function FundPage({ searchParams }) {
+export default async function FundPage(props) {
+  const searchParams = await props.searchParams;
   const user = await getCurrentUser();
   const fund = await getCachedFund(user.class_id).catch(() => null);
   const billingDateInterval = fund ? getBillingDateInterval(fund) : null;

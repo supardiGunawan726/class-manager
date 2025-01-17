@@ -16,7 +16,8 @@ const getCachedTransactionsByUserId = unstable_cache(
   { tags: ["user-transactions"] }
 );
 
-export default async function MemberPage({ params }) {
+export default async function MemberPage(props) {
+  const params = await props.params;
   const { uid } = params;
 
   if (!uid) {

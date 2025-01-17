@@ -15,7 +15,8 @@ const getCachedDocumentationAuthor = unstable_cache(
   { tags: ["documentation", "documentation-author"] }
 );
 
-export default async function DocumentationItemPage({ params }) {
+export default async function DocumentationItemPage(props) {
+  const params = await props.params;
   const user = await getCurrentUser();
   const documentation = await getCachedDocumentation(user.class_id, params.id);
   const author = await getCachedDocumentationAuthor(documentation.author);
