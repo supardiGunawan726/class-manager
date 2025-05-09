@@ -71,6 +71,7 @@ export default function Login() {
           src="/images/logo.png"
           width={300}
           height={94}
+          alt="Class Manager logo"
           className="mx-auto"
         />
         <CardTitle>Masuk</CardTitle>
