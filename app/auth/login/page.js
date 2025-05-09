@@ -47,12 +47,16 @@ export default function Login() {
       console.dir(err);
 
       let error;
-      if (err.message.includes("missing-password")) {
+      if (err.code === "auth/user-not-found") {
+        error = "Email belum terdaftar";
+      } else if (err.code === "auth/wrong-password") {
+        error = "Password tidak benar";
+      } else if (err.code === "auth/missing-password") {
         error = "Password tidak boleh kosong";
-      } else if (error.message.includes("invalid-credential")) {
+      } else if (err.code === "auth/invalid-credential") {
         error = "Email atau password salah";
-      } else if (error.message.includes("invalid-email")) {
-        error = "Email tidak valid atau belum terdaftar";
+      } else if (err.code === "auth/invalid-email") {
+        error = "Email tidak valid";
       } else {
         error = "Terjadi kesalahan, mohon coba kembali";
       }
