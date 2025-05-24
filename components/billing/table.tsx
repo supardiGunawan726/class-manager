@@ -22,7 +22,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useRouter, useSearchParams } from "next/navigation";
 import { User } from "@/lib/firebase/model/user";
-import { Billing } from "@/lib/firebase/model/transaction";
+import { Billing } from "@/lib/firebase/model/billing";
 
 type BillingToolbarProps = {
   billingDateInterval: { seconds: number; nanoseconds: number }[];
