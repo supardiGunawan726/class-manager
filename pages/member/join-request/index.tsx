@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { User } from "@/lib/firebase/model/user";
 import React from "react";
-import { JoinRequestTable } from "./_join-request-table";
+import { JoinRequestTable } from "../../../components/member/_join-request-table";
 import { useGetCurrentUser } from "@/lib/queries/session";
 import { useGetClassJoinRequest } from "@/lib/queries/class";
 import AppLayout from "@/pages/_layout";

@@ -9,7 +9,6 @@ import {
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useRouter, usePathname } from "next/navigation";
 import { User } from "@/lib/firebase/model/user";
 import { NewMemberForm } from "./_new-member-form";
 import { DialogProps } from "@radix-ui/react-dialog";

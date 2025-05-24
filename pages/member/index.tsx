@@ -1,5 +1,8 @@
 import { useGetUsersByClassId } from "@/lib/queries/user";
-import { MemberTable, MemberTableToolbar } from "./_member-table";
+import {
+  MemberTable,
+  MemberTableToolbar,
+} from "../../components/member/_member-table";
 import { useGetCurrentUser } from "@/lib/queries/session";
 import AppLayout from "../_layout";
 

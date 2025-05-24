@@ -1,4 +1,4 @@
-import { GroupsGenerator } from "./groups-generator";
+import { GroupsGenerator } from "@/components/group/groups-generator";
 import { useGetCurrentUser } from "@/lib/queries/session";
 import { useGetUsersByClassId } from "@/lib/queries/user";
 import AppLayout from "@/pages/_layout";
