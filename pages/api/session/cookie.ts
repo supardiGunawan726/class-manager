@@ -1,6 +1,6 @@
 import { createSessionCookie } from "@/lib/firebase/admin/db/user";
 import { NextApiRequest, NextApiResponse } from "next";
-import cookie from "cookie";
+import { serialize } from "cookie";
 
 export default async function handler(
   req: NextApiRequest,
@@ -12,7 +12,7 @@ export default async function handler(
       const sessionCookie = await createSessionCookie(body.idToken);
       res.setHeader(
         "Set-Cookie",
-        cookie.serialize("session", sessionCookie, {
+        serialize("session", sessionCookie, {
           maxAge: 60 * 60 * 24 * 5 * 1000,
           secure: true,
           httpOnly: true,
