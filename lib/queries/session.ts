@@ -1,9 +1,35 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { createCookie, getCurrentUser } from "../services/session";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  createCookie,
+  getCurrentUser,
+  removeCookie,
+} from "../services/session";
 
 export function useCreateSessionCookie() {
+  const clientQuery = useQueryClient();
+
   const mutation = useMutation({
     mutationFn: createCookie,
+    onSuccess: () => {
+      clientQuery.invalidateQueries({
+        queryKey: ["currentUser"],
+      });
+    },
+  });
+
+  return mutation;
+}
+
+export function useRemoveSessionCookie() {
+  const clientQuery = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: removeCookie,
+    onSuccess: () => {
+      clientQuery.invalidateQueries({
+        queryKey: ["currentUser"],
+      });
+    },
   });
 
   return mutation;

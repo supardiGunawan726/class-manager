@@ -5,6 +5,12 @@ export async function getClassById(id: string): Promise<UserClass> {
   const res = await fetch(`/api/classes/${id}`, {
     method: "GET",
   });
+
+  if (res.status !== 200) {
+    const json = await res.json();
+    throw new Error(json.message);
+  }
+
   return await res.json();
 }
 
@@ -18,6 +24,12 @@ export async function addClassMember(
     },
     body: JSON.stringify(user),
   });
+
+  if (res.status !== 200) {
+    const json = await res.json();
+    throw new Error(json.message);
+  }
+
   return res.json();
 }
 
@@ -31,6 +43,12 @@ export async function getClassJoinRequest(class_id: string): Promise<User[]> {
   const res = await fetch(`/api/classes/${class_id}/join-request`, {
     method: "GET",
   });
+
+  if (res.status !== 200) {
+    const json = await res.json();
+    throw new Error(json.message);
+  }
+
   return res.json();
 }
 
