@@ -8,7 +8,7 @@ export default async function handler(
   try {
     switch (req.method) {
       case "DELETE":
-        const class_id = req.query.id as string;
+        const class_id = req.query.class_id as string;
         const uid = req.query.uid as string;
 
         await removeClassMember(class_id, uid);

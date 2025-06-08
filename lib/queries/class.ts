@@ -32,6 +32,7 @@ export function useAddClassMember() {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["user"],
+        refetchType: "all",
       });
     },
   });
@@ -48,6 +49,7 @@ export function useRemoveClassMember() {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["user"],
+        refetchType: "all",
       });
     },
   });
@@ -73,6 +75,7 @@ export function useApproveJoinRequest() {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["user"],
+        refetchType: "all",
       });
     },
   });
@@ -89,6 +92,7 @@ export function useDeclineJoinRequest() {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["user"],
+        refetchType: "all",
       });
     },
   });

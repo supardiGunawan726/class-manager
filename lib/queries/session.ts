@@ -13,6 +13,7 @@ export function useCreateSessionCookie() {
     onSuccess: () => {
       clientQuery.invalidateQueries({
         queryKey: ["currentUser"],
+        refetchType: "all",
       });
     },
   });
@@ -28,6 +29,7 @@ export function useRemoveSessionCookie() {
     onSuccess: () => {
       clientQuery.invalidateQueries({
         queryKey: ["currentUser"],
+        refetchType: "all",
       });
     },
   });

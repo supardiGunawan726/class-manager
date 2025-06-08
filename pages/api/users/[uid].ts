@@ -1,13 +1,19 @@
-import { setUserData } from "@/lib/firebase/admin/db/user";
+import { getUserDataByUid, setUserData } from "@/lib/firebase/admin/db/user";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  const uid = req.query.uid as string;
+
   switch (req.method) {
+    case "GET":
+      const user = await getUserDataByUid(uid);
+
+      res.status(200).json(user);
+      break;
     case "PUT":
-      const uid = req.query.uid as string;
       const data = JSON.parse(req.body);
 
       await setUserData(uid, {

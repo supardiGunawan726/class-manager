@@ -1,5 +1,5 @@
 import { skipToken, useMutation, useQuery } from "@tanstack/react-query";
-import { getUsersByClassId, setUserData } from "../services/user";
+import { getUserByUid, getUsersByClassId, setUserData } from "../services/user";
 
 export function useSetUserData() {
   const mutation = useMutation({
@@ -7,6 +7,15 @@ export function useSetUserData() {
   });
 
   return mutation;
+}
+
+export function useGetUserByUid(uid?: string) {
+  const query = useQuery({
+    queryKey: ["user", `user_${uid}`],
+    queryFn: uid ? () => getUserByUid(uid) : skipToken,
+  });
+
+  return query;
 }
 
 export function useGetUsersByClassId(class_id?: string) {

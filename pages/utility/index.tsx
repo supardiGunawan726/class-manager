@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import * as Icon from "lucide-react";
-import AppLayout from "../_layout";
+import AppLayout from "@/components/app-layout";
 
 export default function UtilityPage() {
   return (

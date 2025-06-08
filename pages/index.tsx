@@ -1,7 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import * as Icon from "lucide-react";
-import AppLayout from "./_layout";
 import { useGetCurrentUser } from "@/lib/queries/session";
 import Greeting from "@/components/homepage/greeting";
 import Announcement from "@/components/homepage/announcement";
@@ -10,6 +9,7 @@ import { useGetFundByClassId } from "@/lib/queries/fund";
 import { useGetBillingsByClassId } from "@/lib/queries/billing";
 import { getBillingDateInterval } from "@/lib/services/billing";
 import { useGetAnnouncements } from "@/lib/queries/announcement";
+import AppLayout from "@/components/app-layout";
 
 export default function Home() {
   const { data: currentUser } = useGetCurrentUser();

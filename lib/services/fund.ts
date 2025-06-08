@@ -1,7 +1,7 @@
 import { Fund } from "../firebase/model/fund";
 
 export async function getFundByClassId(class_id: string): Promise<Fund> {
-  const res = await fetch(`/api/funds/${class_id}`, {
+  const res = await fetch(`/api/classes/${class_id}/funds`, {
     method: "GET",
   });
 

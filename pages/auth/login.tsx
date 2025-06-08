@@ -10,7 +10,7 @@ import { FormEvent, useState } from "react";
 import * as Icon from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import AuthLayout from "./_layout";
+import AuthLayout from "../../components/auth-layout";
 import { useCreateSessionCookie } from "@/lib/queries/session";
 
 export default function Page() {

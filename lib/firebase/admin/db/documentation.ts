@@ -1,7 +1,8 @@
 import { FieldValue } from "firebase-admin/firestore";
 import { db, bucket } from "../../firebase-admin-config";
+import { Documentation, DocumentationMedia } from "../../model/documentation";
 
-export async function getAllDocumentations(classId) {
+export async function getAllDocumentations(classId: string) {
   try {
     const documentationDocs = await db
       .collection("classes")
@@ -16,11 +17,15 @@ export async function getAllDocumentations(classId) {
 
       documentationData.push({
         id: doc.id,
-        published_at: { ...data.published_at },
+        author: data.author,
         title: data.title,
         description: data.description,
         media: data.media,
-      });
+        published_at: {
+          seconds: data.published_at.seconds,
+          nanoseconds: data.published_at.nanoseconds,
+        },
+      } as Documentation);
     }
 
     return documentationData;
@@ -29,7 +34,7 @@ export async function getAllDocumentations(classId) {
   }
 }
 
-export async function getDocumentation(classId, id) {
+export async function getDocumentation(classId: string, id: string) {
   try {
     const documentationDoc = await db
       .collection("classes")
@@ -46,60 +51,44 @@ export async function getDocumentation(classId, id) {
 
     return {
       id: documentationDoc.id,
-      title: data.title,
-      description: data.description,
-      published_at: { ...data.published_at },
-      author: data.author,
-      media: data.media,
-    };
+      author: data?.author,
+      title: data?.title,
+      description: data?.description,
+      media: data?.media,
+      published_at: {
+        seconds: data?.published_at.seconds,
+        nanoseconds: data?.published_at.nanoseconds,
+      },
+    } as Documentation;
   } catch (error) {
     return Promise.reject(error);
   }
 }
 
-export async function createNewDocumentation(classId, data) {
+export async function createNewDocumentation(
+  classId: string,
+  data: Omit<Documentation, "published_at">
+) {
   try {
     const documentationDoc = db
       .collection("classes")
       .doc(classId)
       .collection("documentation")
-      .doc();
-
-    const media = [];
-    for (const mediaFile of data.media) {
-      const { name, type } = mediaFile;
-
-      const fileRef = bucket.file(
-        `classes/${classId}/documentation/${documentationDoc.id}/${name}`
-      );
-
-      const arrayBuffer = await mediaFile.arrayBuffer();
-      const buffer = Buffer.from(arrayBuffer);
-      await fileRef.save(buffer, {
-        contentType: type,
-      });
-      await fileRef.makePublic();
-
-      media.push({
-        url: fileRef.publicUrl(),
-        type: type,
-        filename: name,
-      });
-    }
+      .doc(data.id);
 
     await documentationDoc.set({
       published_at: FieldValue.serverTimestamp(),
       author: data.author,
       title: data.title,
       description: data.description,
-      media,
+      media: data.media,
     });
   } catch (error) {
     return Promise.reject(error);
   }
 }
 
-export async function deleteDocumentation(classId, id) {
+export async function deleteDocumentation(classId: string, id: string) {
   try {
     await bucket.deleteFiles({
       prefix: `classes/${classId}/documentation/${id}/`,
@@ -115,11 +104,22 @@ export async function deleteDocumentation(classId, id) {
   }
 }
 
-export async function updateDocumentation(classId, id, data) {
+export async function updateDocumentation(
+  classId: string,
+  id: string,
+  data: Omit<Documentation, "id" | "published_at" | "media" | "author"> & {
+    new_media_file: {
+      url: string;
+      filename: string;
+      type: string;
+    }[];
+    remove_media_filename: string[];
+  }
+) {
   try {
     const { title, description, new_media_file, remove_media_filename } = data;
 
-    const documentationRef = await db
+    const documentationRef = db
       .collection("classes")
       .doc(classId)
       .collection("documentation")
@@ -130,46 +130,30 @@ export async function updateDocumentation(classId, id, data) {
       throw new Error("Documentation not exist in db");
     }
 
-    const documentationData = documentationDoc.data();
+    const documentationData = documentationDoc.data() as Documentation;
     let media = documentationData.media;
 
-    // delete files
-    const deleteFilesPromise = [];
-    for (const filename of remove_media_filename) {
-      const fileRef = bucket.file(
-        `classes/${classId}/documentation/${documentationDoc.id}/${filename}`
+    if (remove_media_filename) {
+      // delete files
+      const deleteFilesPromise = [];
+      for (const filename of remove_media_filename) {
+        const fileRef = bucket.file(
+          `classes/${classId}/documentation/${documentationDoc.id}/${filename}`
+        );
+        deleteFilesPromise.push(fileRef.delete({ ignoreNotFound: true }));
+      }
+      await Promise.all(deleteFilesPromise);
+      media = media.filter(
+        (mediaItem) =>
+          !remove_media_filename.find(
+            (removeMediaFilenameItem) =>
+              removeMediaFilenameItem === mediaItem.filename
+          )
       );
-      deleteFilesPromise.push(fileRef.delete({ ignoreNotFound: true }));
     }
-    await Promise.all(deleteFilesPromise);
-    media = media.filter(
-      (mediaItem) =>
-        !remove_media_filename.find(
-          (removeMediaFilenameItem) =>
-            removeMediaFilenameItem === mediaItem.filename
-        )
-    );
 
-    // upload new files
-    for (const newMediaFile of new_media_file) {
-      const { name, type } = newMediaFile;
-
-      const fileRef = bucket.file(
-        `classes/${classId}/documentation/${documentationDoc.id}/${name}`
-      );
-
-      const arrayBuffer = await newMediaFile.arrayBuffer();
-      const buffer = Buffer.from(arrayBuffer);
-      await fileRef.save(buffer, {
-        contentType: type,
-      });
-      await fileRef.makePublic();
-
-      media.push({
-        url: fileRef.publicUrl(),
-        type: type,
-        filename: name,
-      });
+    if (new_media_file) {
+      media.push(...new_media_file);
     }
 
     await documentationRef.update({

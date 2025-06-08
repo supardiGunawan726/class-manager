@@ -7,7 +7,6 @@ export async function getBillingsByClassId(
   q?: { datePeriod?: { seconds: number; nanoseconds: number } }
 ): Promise<Billing[]> {
   const searchParams = new URLSearchParams();
-  searchParams.set("class_id", class_id);
 
   if (q?.datePeriod) {
     searchParams.set("datePeriod_seconds", q.datePeriod.seconds.toString());
@@ -17,12 +16,15 @@ export async function getBillingsByClassId(
     );
   }
 
-  const res = await fetch(`/api/billings?${searchParams.toString()}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "json/applicatioin",
-    },
-  });
+  const res = await fetch(
+    `/api/classes/${class_id}/billings?${searchParams.toString()}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "json/application",
+      },
+    }
+  );
   return await res.json();
 }
 

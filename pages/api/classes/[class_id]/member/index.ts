@@ -16,7 +16,7 @@ export default async function handler(
   try {
     switch (req.method) {
       case "POST":
-        const class_id = req.query.id as string;
+        const class_id = req.query.class_id as string;
         const { email, name, nim, password } = JSON.parse(req.body);
         const user = await getUserDataByEmail(email).catch(async function () {
           const newUser = await createUser({

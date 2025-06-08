@@ -7,9 +7,9 @@ export default async function handler(
 ) {
   switch (req.method) {
     case "GET":
-      const id = req.query.id as string;
+      const class_id = req.query.class_id as string;
 
-      const userClass = await getClassById(id);
+      const userClass = await getClassById(class_id);
       res.status(200).json(userClass);
       break;
     default:

@@ -4,7 +4,7 @@ import React from "react";
 import { JoinRequestTable } from "../../../components/member/_join-request-table";
 import { useGetCurrentUser } from "@/lib/queries/session";
 import { useGetClassJoinRequest } from "@/lib/queries/class";
-import AppLayout from "@/pages/_layout";
+import AppLayout from "@/components/app-layout";
 
 export default function JoinRequest() {
   const { data: user } = useGetCurrentUser();

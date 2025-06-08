@@ -6,7 +6,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
-    const class_id = req.query.id as string;
+    const class_id = req.query.class_id as string;
     switch (req.method) {
       case "GET":
         const joinRequest = await getClassJoinRequest(class_id);

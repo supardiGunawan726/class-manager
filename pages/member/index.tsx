@@ -4,7 +4,7 @@ import {
   MemberTableToolbar,
 } from "../../components/member/_member-table";
 import { useGetCurrentUser } from "@/lib/queries/session";
-import AppLayout from "../_layout";
+import AppLayout from "@/components/app-layout";
 
 export default function Member() {
   const { data: user } = useGetCurrentUser();

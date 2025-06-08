@@ -3,13 +3,10 @@ import { Announcement } from "../firebase/model/announcement";
 export async function getAnnouncements(
   class_id: string
 ): Promise<Announcement[]> {
-  const searchParams = new URLSearchParams();
-  searchParams.set("class_id", class_id);
-
-  const res = await fetch(`/api/announcements?${searchParams.toString()}`, {
+  const res = await fetch(`/api/classes/${class_id}/announcements`, {
     method: "GET",
     headers: {
-      "Content-Type": "json/applicatioin",
+      "Content-Type": "json/application",
     },
   });
   return await res.json();

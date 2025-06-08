@@ -18,7 +18,7 @@ import {
 import * as Icon from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import AuthLayout from "./_layout";
+import AuthLayout from "../../components/auth-layout";
 import { useCreateSessionCookie } from "@/lib/queries/session";
 import { useSetUserData } from "@/lib/queries/user";
 
