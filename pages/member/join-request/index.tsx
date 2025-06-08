@@ -29,7 +29,7 @@ export default function JoinRequest() {
             )}
             {user && userClassJoinRequests.length > 0 && (
               <>
-                <header className="flex items-center">
+                {/* <header className="flex items-center">
                   <Input
                     type="text"
                     name="search"
@@ -37,7 +37,7 @@ export default function JoinRequest() {
                     placeholder="Cari mahasiswa dengan nama"
                     className="w-[276px]"
                   />
-                </header>
+                </header> */}
                 <JoinRequestTable
                   user={user}
                   userClassJoinRequests={userClassJoinRequests}

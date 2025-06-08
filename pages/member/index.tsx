@@ -2,7 +2,7 @@ import { useGetUsersByClassId } from "@/lib/queries/user";
 import {
   MemberTable,
   MemberTableToolbar,
-} from "../../components/member/_member-table";
+} from "../../components/member/member-table";
 import { useGetCurrentUser } from "@/lib/queries/session";
 import AppLayout from "@/components/app-layout";
 

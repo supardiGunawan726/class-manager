@@ -28,13 +28,13 @@ export default function DocumentationPage() {
         </header>
         <section className="mt-12">
           <header className="flex items-center">
-            <Input
+            {/* <Input
               type="text"
               name="search"
               id="search"
               placeholder="Cari media"
               className="w-[276px]"
-            />
+            /> */}
             {user && user.role === "ketua" && (
               <>
                 <Button

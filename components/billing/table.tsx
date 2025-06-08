@@ -79,13 +79,13 @@ export function BillingToolbar({
         onOpenChange={setIsPayTransactionDialogOpen}
       />
       <header className="flex items-center">
-        <Input
+        {/* <Input
           type="text"
           name="search"
           id="search"
           placeholder="Cari nama mahasiswa"
           className="w-[200px]"
-        />
+        /> */}
         <Select
           defaultValue={billingDate}
           onValueChange={handleBillingDateChange}

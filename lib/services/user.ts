@@ -3,7 +3,7 @@ import { User } from "../firebase/model/user";
 export async function setUserData(data: User) {
   try {
     return await fetch(`/api/users/${data.uid}`, {
-      method: "POST",
+      method: "PUT",
       headers: {
         "content-type": "json/application",
       },

@@ -4,11 +4,20 @@ import { db, storage } from "../firebase/firebase-config";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 export async function getTransactions(
-  class_id: string
+  class_id: string,
+  user_id?: string
 ): Promise<Transaction[]> {
-  const res = await fetch(`/api/classes/${class_id}/transactions`, {
-    method: "GET",
-  });
+  const searchParams = new URLSearchParams();
+  if (user_id) {
+    searchParams.set("user_id", user_id);
+  }
+
+  const res = await fetch(
+    `/api/classes/${class_id}/transactions?${searchParams.toString()}`,
+    {
+      method: "GET",
+    }
+  );
 
   if (res.status !== 200) {
     const json = await res.json();

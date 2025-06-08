@@ -30,7 +30,7 @@ type MemberTableProps = {
 };
 
 export function MemberTable({ user, userClassMembers }: MemberTableProps) {
-  const mutation = useRemoveClassMember();
+  const { mutateAsync: removeClassMember } = useRemoveClassMember();
 
   function deleteMember(uid: string) {
     return async () => {
@@ -38,7 +38,7 @@ export function MemberTable({ user, userClassMembers }: MemberTableProps) {
       formData.set("class_id", user.class_id!);
       formData.set("uid", uid);
 
-      await mutation.mutateAsync({
+      await removeClassMember({
         class_id: user.class_id!,
         uid: uid,
       });
@@ -106,13 +106,13 @@ export function MemberTableToolbar({ user }: MemberTableToolbarProps) {
         onOpenChange={setIsMemberDialogOpen}
       />
       <header className="flex items-center">
-        <Input
+        {/* <Input
           type="text"
           name="search"
           id="search"
           placeholder="Cari mahasiswa dengan nama"
           className="w-[276px]"
-        />
+        /> */}
         {user.role === "ketua" && (
           <>
             <Link

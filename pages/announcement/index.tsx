@@ -32,13 +32,13 @@ export default function AnnouncementPage() {
         {user && announcements && (
           <section className="mt-12">
             <header className="flex items-center">
-              <Input
+              {/* <Input
                 type="text"
                 name="search"
                 id="search"
                 placeholder="Cari pengumuman"
                 className="w-[276px]"
-              />
+              /> */}
               {user.role === "ketua" && (
                 <>
                   <Button

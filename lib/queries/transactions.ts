@@ -11,10 +11,10 @@ import {
 } from "../services/transaction";
 import { Transaction } from "../firebase/model/transaction";
 
-export function useGetTransactions(class_id?: string) {
+export function useGetTransactions(class_id?: string, user_id?: string) {
   const query = useQuery({
     queryKey: ["transaction", `transaction_${class_id}`],
-    queryFn: class_id ? () => getTransactions(class_id) : skipToken,
+    queryFn: class_id ? () => getTransactions(class_id, user_id) : skipToken,
   });
 
   return query;

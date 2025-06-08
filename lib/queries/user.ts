@@ -1,9 +1,22 @@
-import { skipToken, useMutation, useQuery } from "@tanstack/react-query";
+import {
+  skipToken,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { getUserByUid, getUsersByClassId, setUserData } from "../services/user";
 
 export function useSetUserData() {
+  const queryClient = useQueryClient();
+
   const mutation = useMutation({
     mutationFn: setUserData,
+    onSettled(data, error, variables) {
+      queryClient.invalidateQueries({
+        queryKey: ["user", `user_${variables.uid}`],
+        refetchType: "all",
+      });
+    },
   });
 
   return mutation;
