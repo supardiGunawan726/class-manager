@@ -1,7 +1,9 @@
 import { cleanUndefined } from "@/lib/utils";
 import { db } from "../../firebase-admin-config";
+import { Discussion, DiscussionChat } from "../../model/discussion";
+import { Timestamp } from "firebase-admin/firestore";
 
-export async function getAllDiscussions(classId) {
+export async function getAllDiscussions(classId: string) {
   try {
     const discussionsDoc = await db
       .collection("classes")
@@ -19,13 +21,16 @@ export async function getAllDiscussions(classId) {
       });
     }
 
-    return discussions;
+    return discussions as Discussion[];
   } catch (error) {
     return Promise.reject(error);
   }
 }
 
-export async function createDiscussion(classId, { name, description }) {
+export async function createDiscussion(
+  classId: string,
+  { name, description }: Omit<Discussion, "id">
+) {
   try {
     await db.collection("classes").doc(classId).collection("discussions").add(
       cleanUndefined({
@@ -38,7 +43,7 @@ export async function createDiscussion(classId, { name, description }) {
   }
 }
 
-export async function getDiscussion(classId, discussionId) {
+export async function getDiscussion(classId: string, discussionId: string) {
   try {
     const discussionDoc = await db
       .collection("classes")
@@ -50,7 +55,7 @@ export async function getDiscussion(classId, discussionId) {
     if (!discussionDoc.exists) {
       throw new Error("Discussion not exist in the database");
     }
-    const discussionData = discussionDoc.data();
+    const discussionData = discussionDoc.data() as Discussion;
 
     return {
       id: discussionDoc.id,
@@ -62,7 +67,10 @@ export async function getDiscussion(classId, discussionId) {
   }
 }
 
-export async function getAllDiscussionChats(classId, discussionId) {
+export async function getAllDiscussionChats(
+  classId: string,
+  discussionId: string
+) {
   try {
     const chatsDoc = await db
       .collection("classes")
@@ -82,20 +90,23 @@ export async function getAllDiscussionChats(classId, discussionId) {
         id: doc.id,
         sender_id: data.sender_id,
         content: data.content,
-        sent_at: { ...data.sent_at },
+        sent_at: {
+          seconds: data.sent_at.seconds,
+          nanoseconds: data.sent_at.nanoseconds,
+        },
       });
     }
 
-    return chats;
+    return chats as DiscussionChat[];
   } catch (error) {
     return Promise.reject(error);
   }
 }
 
 export async function createChat(
-  classid,
-  discussionId,
-  { sender_id, content, sent_at }
+  classid: string,
+  discussionId: string,
+  { sender_id, content }: Omit<DiscussionChat, "id" | "sent_at">
 ) {
   try {
     await db
@@ -107,7 +118,7 @@ export async function createChat(
       .add({
         sender_id,
         content,
-        sent_at,
+        sent_at: Timestamp.now(),
       });
   } catch (error) {
     return Promise.reject(error);
