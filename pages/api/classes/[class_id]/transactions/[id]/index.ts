@@ -1,7 +1,4 @@
-import {
-  createAnnouncement,
-  getAnnouncements,
-} from "@/lib/firebase/admin/db/announcement";
+import { updateTransaction } from "@/lib/firebase/admin/db/transaction";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -10,6 +7,7 @@ export default async function handler(
 ) {
   try {
     const class_id = req.query.class_id as string;
+    const id = req.query.id as string;
     let data;
     try {
       data = JSON.parse(req.body);
@@ -18,18 +16,14 @@ export default async function handler(
     }
 
     switch (req.method) {
-      case "GET":
-        const announcements = await getAnnouncements(class_id);
-        res.status(200).json(announcements);
-        break;
-      case "PUT":
-        await createAnnouncement(class_id, data);
+      case "POST":
+        await updateTransaction(class_id, id, data);
         res.status(200).end();
         break;
       default:
         res.status(404).json({ message: "not found" });
     }
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: error.message, stack: error.stack });
   }
 }

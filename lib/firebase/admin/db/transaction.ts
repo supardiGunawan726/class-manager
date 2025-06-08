@@ -1,16 +1,12 @@
-import { bucket, db } from "../../firebase-admin-config";
+import { db } from "../../firebase-admin-config";
 import { Query, Timestamp } from "firebase-admin/firestore";
 import { cleanUndefined } from "@/lib/utils";
 import { Transaction } from "../../model/transaction";
 import { DEFAULT_FUND_DOC_ID, UserFundingInformation } from "../../model/fund";
-import { getUsersFundingInformationByUids } from "./fund";
 
-export async function createTransaction(
-  classId: string,
-  data: Omit<Transaction, "id">
-) {
+export async function createTransaction(classId: string, data: Transaction) {
   try {
-    const { user_id, amount, billing_date, date, proof, verified } = data;
+    const { id, user_id, amount, billing_date, date, proof, verified } = data;
 
     const transactionDoc = db
       .collection("classes")
@@ -18,27 +14,7 @@ export async function createTransaction(
       .collection("funds")
       .doc(DEFAULT_FUND_DOC_ID)
       .collection("transactions")
-      .doc();
-
-    // const convertedDate = new Timestamp(date.seconds, date.nanoseconds);
-
-    // const buffer = new Buffer(proof, "base64")
-
-    // const arrayBuffer = await proof.arrayBuffer();
-    // const buffer = Buffer.from(arrayBuffer);
-    // const fileRef = bucket.file(
-    //   `classes/${classId}/transactions/${transactionDoc.id}/${user_id}_${convertedDate.toMillis()}`
-    // );
-
-    // await fileRef.save(proof, {
-
-    // })
-
-    // await fileRef.save(buffer, {
-    //   contentType: proof.type,
-    // });
-
-    // await fileRef.makePublic();
+      .doc(id);
 
     const transaction = {
       user_id,
@@ -112,7 +88,7 @@ export async function getTransaction(classId: string, transactionId: string) {
       proof: transactionData.proof,
       user_id: transactionData.user_id,
       verified: transactionData.verified,
-    };
+    } as Transaction;
   } catch (error) {
     return Promise.reject(error);
   }
@@ -129,7 +105,7 @@ export async function getTransactionsByClassId(classId: string) {
 
     const transactionsDoc = await transactionsRef.get();
 
-    const transactions = [];
+    const transactions: Transaction[] = [];
     for (const doc of transactionsDoc.docs) {
       const transactionData = doc.data();
       transactions.push({
@@ -177,7 +153,7 @@ export async function getTransactionsByBillingDate(
 
     const transactionsDoc = await transactionsRef.get();
 
-    const transactions = [];
+    const transactions: Transaction[] = [];
     for (const doc of transactionsDoc.docs) {
       const transactionData = doc.data();
       transactions.push({
@@ -214,7 +190,7 @@ export async function getAllTransactions(classId: string) {
       .orderBy("date", "desc")
       .get();
 
-    const transactions = [];
+    const transactions: Transaction[] = [];
 
     for (const doc of transactionsDoc.docs) {
       const data = doc.data();
@@ -252,7 +228,7 @@ export async function getTransactionsByUserId(classId: string, userId: string) {
       .where("user_id", "==", userId)
       .get();
 
-    const transactions = [];
+    const transactions: Transaction[] = [];
 
     for (const doc of transactionsDoc.docs) {
       const data = doc.data();
@@ -282,7 +258,7 @@ export async function getTransactionsByUserId(classId: string, userId: string) {
 export async function updateTransaction(
   classId: string,
   transactionId: string,
-  data: Transaction
+  data: Partial<Omit<Transaction, "id">>
 ) {
   try {
     await db

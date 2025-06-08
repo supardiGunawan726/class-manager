@@ -39,7 +39,7 @@ export async function getAnnouncements(
 
 export async function createAnnouncement(
   classId: string,
-  data: Omit<Announcement, "id">
+  data: Omit<Announcement, "id" | "published_at">
 ) {
   try {
     const announcementData = {
@@ -64,7 +64,7 @@ export async function createAnnouncement(
   }
 }
 
-export async function getAnnouncementById(classId: string, id: string) {
+export async function getAnnouncement(classId: string, id: string) {
   try {
     const announcementDoc = await db
       .collection("classes")
@@ -97,7 +97,7 @@ export async function getAnnouncementById(classId: string, id: string) {
 export async function updateAnnouncement(
   classId: string,
   id: string,
-  data: Partial<Omit<Announcement, "id">>
+  data: Partial<Omit<Announcement, "id" | "published_at" | "author">>
 ) {
   try {
     await db

@@ -19,7 +19,7 @@ export async function setUserData(data: User) {
   }
 }
 
-export async function getUserByUid(uid: string) {
+export async function getUserByUid(uid: string): Promise<User> {
   try {
     const res = await fetch(`/api/users/${uid}`, {
       method: "GET",

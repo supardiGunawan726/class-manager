@@ -1,6 +1,6 @@
 import type { Announcement } from "@/lib/firebase/model/announcement";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { AnnouncementCard } from "../announcement";
+import { AnnouncementCard } from "../announcement/announcement";
 
 type AnnouncementProps = {
   announcements: Announcement[];

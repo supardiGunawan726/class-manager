@@ -1,4 +1,3 @@
-import { Timestamp } from "firebase/firestore";
 import { Billing } from "../../model/billing";
 import { getFundByClassId, getUsersFundingInformationByUids } from "./fund";
 import {
@@ -9,6 +8,7 @@ import { getUsersDataByClassId } from "./user";
 import * as DateFns from "date-fns";
 import { Transaction } from "../../model/transaction";
 import { getBillingDateInterval } from "@/lib/services/billing";
+import { Timestamp } from "firebase-admin/firestore";
 
 export async function getBillingsByClassId(
   classId: string,

@@ -11,7 +11,7 @@ import { BILLING_STATUS, formatTimestamp, idrFormatter } from "@/lib/utils";
 import * as Icon from "lucide-react";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -23,6 +23,10 @@ import { cn } from "@/lib/utils";
 import { useRouter, useSearchParams } from "next/navigation";
 import { User } from "@/lib/firebase/model/user";
 import { Billing } from "@/lib/firebase/model/billing";
+import { TransactionDialog } from "./transaction-dialog";
+import { useState } from "react";
+import { NewTransactionDialog } from "./new-transaction-dialog";
+import { PayTransactionDialog } from "./pay-transaction-dialog";
 
 type BillingToolbarProps = {
   billingDateInterval: { seconds: number; nanoseconds: number }[];
@@ -41,6 +45,12 @@ export function BillingToolbar({
     ? billingDateSearchParam
     : formatTimestamp(billingDateInterval[billingDateInterval.length - 1]);
 
+  const [isTransactionDialogOpen, setIsTransactionDialogOpen] = useState(false);
+  const [isNewTransactionDialogOpen, setIsNewTransactionDialogOpen] =
+    useState(false);
+  const [isPayTransactionDialogOpen, setIsPayTransactionDialogOpen] =
+    useState(false);
+
   function handleBillingDateChange(value: string) {
     const searchParams = new URLSearchParams(window.location.search);
     searchParams.set("date", value);
@@ -48,55 +58,78 @@ export function BillingToolbar({
   }
 
   return (
-    <header className="flex items-center">
-      <Input
-        type="text"
-        name="search"
-        id="search"
-        placeholder="Cari nama mahasiswa"
-        className="w-[200px]"
+    <>
+      <TransactionDialog
+        user={user}
+        isOpen={isTransactionDialogOpen}
+        onOpenChange={setIsTransactionDialogOpen}
       />
-      <Select
-        defaultValue={billingDate}
-        onValueChange={handleBillingDateChange}
-      >
-        <SelectTrigger className="w-[180px] ml-2">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {billingDateInterval.map((billingDateOption) => (
-            <SelectItem
-              key={formatTimestamp(billingDateOption)}
-              value={formatTimestamp(billingDateOption)}
+      <NewTransactionDialog
+        user={user}
+        billingDateInterval={billingDateInterval}
+        billingDate={billingDate}
+        isOpen={isNewTransactionDialogOpen}
+        onOpenChange={setIsNewTransactionDialogOpen}
+      />
+      <PayTransactionDialog
+        user={user}
+        billingDateInterval={billingDateInterval}
+        billingDate={billingDate}
+        isOpen={isPayTransactionDialogOpen}
+        onOpenChange={setIsPayTransactionDialogOpen}
+      />
+      <header className="flex items-center">
+        <Input
+          type="text"
+          name="search"
+          id="search"
+          placeholder="Cari nama mahasiswa"
+          className="w-[200px]"
+        />
+        <Select
+          defaultValue={billingDate}
+          onValueChange={handleBillingDateChange}
+        >
+          <SelectTrigger className="w-[180px] ml-2">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {billingDateInterval.map((billingDateOption) => (
+              <SelectItem
+                key={formatTimestamp(billingDateOption)}
+                value={formatTimestamp(billingDateOption)}
+              >
+                {formatTimestamp(billingDateOption)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        {user.role === "ketua" && (
+          <>
+            <Button
+              variant="outline"
+              className="ml-auto cursor-pointer"
+              onClick={() => setIsTransactionDialogOpen(true)}
             >
-              {formatTimestamp(billingDateOption)}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      {user && user.role === "ketua" && (
-        <>
-          <Link
-            href="/fund/transaction"
-            className={cn(buttonVariants({ variant: "outline" }), "ml-auto")}
-          >
-            Lihat data transaksi
-          </Link>
-          <Link
-            href={`/fund/transaction/new?billing_date=${billingDate}`}
-            className={cn(buttonVariants({ variant: "destructive" }), "ml-2")}
-          >
-            Input uang kas
-          </Link>
-        </>
-      )}
-      <Link
-        href={`/fund/pay?billing_date=${billingDate}`}
-        className={cn(buttonVariants(), "ml-2")}
-      >
-        Bayar uang kas
-      </Link>
-    </header>
+              Lihat data transaksi
+            </Button>
+            <Button
+              variant="destructive"
+              className="ml-2 cursor-pointer"
+              onClick={() => setIsNewTransactionDialogOpen(true)}
+            >
+              Input uang kas
+            </Button>
+          </>
+        )}
+        <Button
+          className="ml-2 cursor-pointer"
+          onClick={() => setIsPayTransactionDialogOpen(true)}
+        >
+          Bayar uang kas
+        </Button>
+      </header>
+    </>
   );
 }
 

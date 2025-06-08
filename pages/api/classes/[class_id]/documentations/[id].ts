@@ -13,7 +13,6 @@ export default async function handler(
   try {
     const class_id = req.query.class_id as string;
     const id = req.query.id as string;
-
     let data;
     try {
       data = JSON.parse(req.body);
