@@ -1,6 +1,16 @@
 import { UserClass } from "../firebase/model/class";
 import { User } from "../firebase/model/user";
 
+export async function createClass(data: UserClass) {
+  return await fetch(`/api/classes`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "json/application",
+    },
+    body: JSON.stringify(data),
+  });
+}
+
 export async function getClassById(id: string): Promise<UserClass> {
   const res = await fetch(`/api/classes/${id}`, {
     method: "GET",
@@ -40,7 +50,7 @@ export async function removeClassMember(class_id: string, uid: string) {
 }
 
 export async function getClassJoinRequest(class_id: string): Promise<User[]> {
-  const res = await fetch(`/api/classes/${class_id}/join-request`, {
+  const res = await fetch(`/api/classes/${class_id}/join-requests`, {
     method: "GET",
   });
 
@@ -52,14 +62,24 @@ export async function getClassJoinRequest(class_id: string): Promise<User[]> {
   return res.json();
 }
 
+export async function addClassJoinRequest(class_id: string, uid: string) {
+  return await fetch(`/api/classes/${class_id}/join-requests`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "json/application",
+    },
+    body: JSON.stringify({ uid }),
+  });
+}
+
 export async function approveJoinRequest(class_id: string, uid: string) {
-  await fetch(`/api/classes/${class_id}/join-request/${uid}`, {
+  await fetch(`/api/classes/${class_id}/join-requests/${uid}`, {
     method: "POST",
   });
 }
 
 export async function declineJoinRequest(class_id: string, uid: string) {
-  await fetch(`/api/classes/${class_id}/join-request/${uid}`, {
+  await fetch(`/api/classes/${class_id}/join-requests/${uid}`, {
     method: "DELETE",
   });
 }

@@ -71,9 +71,11 @@ export function useUpdateDocumentation() {
     onSettled: (data, error, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["documentation"],
+        refetchType: "all",
       });
       queryClient.invalidateQueries({
         queryKey: [`documentation_${variables.id}`],
+        refetchType: "all",
       });
     },
   });

@@ -5,17 +5,31 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { getUserByUid, getUsersByClassId, setUserData } from "../services/user";
+import { useGetCurrentUser } from "./session";
 
 export function useSetUserData() {
+  const { data: user } = useGetCurrentUser();
+
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: setUserData,
     onSettled(data, error, variables) {
       queryClient.invalidateQueries({
-        queryKey: ["user", `user_${variables.uid}`],
+        queryKey: ["user"],
         refetchType: "all",
       });
+      queryClient.invalidateQueries({
+        queryKey: [`user_${variables.uid}`],
+        refetchType: "all",
+      });
+
+      if (user && user.uid === variables.uid) {
+        queryClient.invalidateQueries({
+          queryKey: ["currentUser"],
+          refetchType: "all",
+        });
+      }
     },
   });
 

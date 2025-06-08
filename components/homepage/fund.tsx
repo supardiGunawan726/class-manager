@@ -13,9 +13,9 @@ import { BillingTable } from "../billing/table";
 import { Billing } from "@/lib/firebase/model/billing";
 
 type FundProps = {
-  fund: Fund | null;
-  datePeriod: { seconds: number; nanoseconds: number };
-  billings: Billing[] | null;
+  fund?: Fund;
+  datePeriod?: { seconds: number; nanoseconds: number };
+  billings?: Billing[];
 };
 
 export default function Fund({ fund, datePeriod, billings }: FundProps) {
@@ -23,7 +23,7 @@ export default function Fund({ fund, datePeriod, billings }: FundProps) {
     <Card>
       <CardHeader>
         <CardTitle>Uang Kas</CardTitle>
-        {fund && billings && billings.length > 0 && (
+        {datePeriod && (
           <CardDescription>{formatTimestamp(datePeriod)}</CardDescription>
         )}
       </CardHeader>

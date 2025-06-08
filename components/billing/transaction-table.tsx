@@ -16,6 +16,7 @@ import Link from "next/link";
 import { Transaction } from "@/lib/firebase/model/transaction";
 import { User } from "@/lib/firebase/model/user";
 import { useUpdateTransaction } from "@/lib/queries/transactions";
+import { TransactionProofDialog } from "../fund/transaction-proof-dialog";
 
 type TransactionTableProps = {
   transactions: Transaction[];
@@ -45,6 +46,10 @@ export function TransactionTable({
     loading: false,
     success: true,
   });
+
+  const [openedTransaction, setOpenedTransaction] = useState<
+    Transaction | undefined
+  >();
 
   function findUser(uid: string) {
     return users.find((user) => user.uid === uid);
@@ -142,6 +147,13 @@ export function TransactionTable({
 
   return (
     <>
+      {openedTransaction && (
+        <TransactionProofDialog
+          transaction={openedTransaction}
+          isOpen={!!openedTransaction}
+          onOpenChange={() => setOpenedTransaction(undefined)}
+        />
+      )}
       <Table>
         <TableHeader>
           <TableRow>
@@ -170,12 +182,13 @@ export function TransactionTable({
               </TableCell>
               <TableCell>{findUser(transaction.user_id)?.name}</TableCell>
               <TableCell>
-                <Link
-                  href={`/fund/transaction/${transaction.id}`}
+                <Button
+                  variant="link"
                   className="hover:underline"
+                  onClick={() => setOpenedTransaction(transaction)}
                 >
                   {formatTimestamp(transaction.date)}
-                </Link>
+                </Button>
               </TableCell>
               <TableCell>{idrFormatter.format(transaction.amount)}</TableCell>
               <TableCell>{formatTimestamp(transaction.billing_date)}</TableCell>

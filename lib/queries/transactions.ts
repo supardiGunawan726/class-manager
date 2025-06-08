@@ -6,6 +6,7 @@ import {
 } from "@tanstack/react-query";
 import {
   createTransaction,
+  getTransaction,
   getTransactions,
   updateTransaction,
 } from "../services/transaction";
@@ -15,6 +16,15 @@ export function useGetTransactions(class_id?: string, user_id?: string) {
   const query = useQuery({
     queryKey: ["transaction", `transaction_${class_id}`],
     queryFn: class_id ? () => getTransactions(class_id, user_id) : skipToken,
+  });
+
+  return query;
+}
+
+export function useGetTransaction(class_id?: string, id?: string) {
+  const query = useQuery({
+    queryKey: ["transaction", `transaction_${class_id}`],
+    queryFn: class_id && id ? () => getTransaction(class_id, id) : skipToken,
   });
 
   return query;

@@ -27,6 +27,8 @@ import { TransactionDialog } from "./transaction-dialog";
 import { useState } from "react";
 import { NewTransactionDialog } from "./new-transaction-dialog";
 import { PayTransactionDialog } from "./pay-transaction-dialog";
+import { Transaction } from "@/lib/firebase/model/transaction";
+import { TransactionProofDialog } from "../fund/transaction-proof-dialog";
 
 type BillingToolbarProps = {
   billingDateInterval: { seconds: number; nanoseconds: number }[];
@@ -139,69 +141,85 @@ type BillingTableProps = {
 };
 
 export function BillingTable({ billings, simple }: BillingTableProps) {
+  const [openedTransaction, setOpenedTransaction] = useState<
+    Transaction | undefined
+  >();
+
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Nama</TableHead>
-          <TableHead>Tanggal</TableHead>
-          {!simple && <TableHead>Terbayar/Tagihan</TableHead>}
-          <TableHead className="text-center">Status</TableHead>
-          {!simple && (
-            <>
-              <TableHead className="text-center">Terverifikasi</TableHead>
-              <TableHead>Total uang kas</TableHead>
-            </>
-          )}
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {billings.map((billing) => (
-          <TableRow key={billing.name}>
-            <TableCell>{billing.name}</TableCell>
-            <TableCell>
-              {billing.last_transaction ? (
-                <Link
-                  href={`/fund/transaction/${billing.last_transaction.id}`}
-                  className="hover:underline"
-                >
-                  {formatTimestamp(billing.last_transaction.date)}
-                </Link>
-              ) : (
-                "-"
-              )}
-            </TableCell>
-            {!simple && (
-              <TableCell>
-                {idrFormatter.format(billing.amount_paid)}/
-                {idrFormatter.format(billing.amount_bill)}
-              </TableCell>
-            )}
-            <TableCell>
-              <div className="grid place-items-center">
-                <StatusBadge status={billing.status} />
-              </div>
-            </TableCell>
+    <>
+      {openedTransaction && (
+        <TransactionProofDialog
+          transaction={openedTransaction}
+          isOpen={!!openedTransaction}
+          onOpenChange={() => setOpenedTransaction(undefined)}
+        />
+      )}
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Nama</TableHead>
+            <TableHead>Tanggal</TableHead>
+            {!simple && <TableHead>Terbayar/Tagihan</TableHead>}
+            <TableHead className="text-center">Status</TableHead>
             {!simple && (
               <>
-                <TableCell>
-                  <div className="grid place-items-center">
-                    {billing.verified ? (
-                      <Icon.Check className="text-green-500" />
-                    ) : (
-                      <Icon.X className="text-red-500" />
-                    )}
-                  </div>
-                </TableCell>
-                <TableCell>
-                  {idrFormatter.format(billing.total_funding)}
-                </TableCell>
+                <TableHead className="text-center">Terverifikasi</TableHead>
+                <TableHead>Total uang kas</TableHead>
               </>
             )}
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {billings.map((billing) => (
+            <TableRow key={billing.name}>
+              <TableCell>{billing.name}</TableCell>
+              <TableCell>
+                {billing.last_transaction ? (
+                  <Button
+                    variant="link"
+                    className="hover:underline"
+                    onClick={() =>
+                      setOpenedTransaction(billing.last_transaction)
+                    }
+                  >
+                    {formatTimestamp(billing.last_transaction.date)}
+                  </Button>
+                ) : (
+                  "-"
+                )}
+              </TableCell>
+              {!simple && (
+                <TableCell>
+                  {idrFormatter.format(billing.amount_paid)}/
+                  {idrFormatter.format(billing.amount_bill)}
+                </TableCell>
+              )}
+              <TableCell>
+                <div className="grid place-items-center">
+                  <StatusBadge status={billing.status} />
+                </div>
+              </TableCell>
+              {!simple && (
+                <>
+                  <TableCell>
+                    <div className="grid place-items-center">
+                      {billing.verified ? (
+                        <Icon.Check className="text-green-500" />
+                      ) : (
+                        <Icon.X className="text-red-500" />
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    {idrFormatter.format(billing.total_funding)}
+                  </TableCell>
+                </>
+              )}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </>
   );
 }
 

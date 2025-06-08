@@ -1,6 +1,7 @@
 import AppLayout from "@/components/app-layout";
 import { BillingTable, BillingToolbar } from "@/components/billing/table";
-import { buttonVariants } from "@/components/ui/button";
+import { SetupFundDialog } from "@/components/fund/setup-fund-dialog";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { useGetBillingsByClassId } from "@/lib/queries/billing";
 import { useGetFundByClassId } from "@/lib/queries/fund";
 import { useGetCurrentUser } from "@/lib/queries/session";
@@ -9,6 +10,7 @@ import { parseDate } from "@/lib/utils";
 import { Timestamp } from "firebase/firestore";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { useState } from "react";
 
 export default function FundPage() {
   const searchParams = useSearchParams();
@@ -32,6 +34,8 @@ export default function FundPage() {
     datePeriod,
   });
 
+  const [isSetupFundDialogOpen, setIsSetupFundDialogOpen] = useState(false);
+
   return (
     <AppLayout>
       <main className="px-12 pt-10">
@@ -40,20 +44,26 @@ export default function FundPage() {
         </header>
         <div className="mt-12">
           {!fund && (
-            <div className="flex flex-col items-center justify-center gap-4 min-h-[500px]">
-              <p className="text-sm text-slate-500 text-center">
-                Fitur uang kas belum disiapkan
-              </p>
-              <Link
-                href="/fund/setup"
-                className={buttonVariants({
-                  variant: "default",
-                  className: "w-max",
-                })}
-              >
-                Siapkan
-              </Link>
-            </div>
+            <>
+              {user && (
+                <SetupFundDialog
+                  user={user}
+                  isOpen={isSetupFundDialogOpen}
+                  onOpenChange={setIsSetupFundDialogOpen}
+                />
+              )}
+              <div className="flex flex-col items-center justify-center gap-4 min-h-[500px]">
+                <p className="text-sm text-slate-500 text-center">
+                  Fitur uang kas belum disiapkan
+                </p>
+                <Button
+                  className="w-max cursor-pointer"
+                  onClick={() => setIsSetupFundDialogOpen(true)}
+                >
+                  Siapkan
+                </Button>
+              </div>
+            </>
           )}
           {fund && billings && billings.length < 1 && (
             <div className="flex flex-col items-center justify-center gap-4 min-h-[500px]">

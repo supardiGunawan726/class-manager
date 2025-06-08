@@ -1,4 +1,4 @@
-import { getClassJoinRequest } from "@/lib/firebase/admin/db/class";
+import { createClass, getClassById } from "@/lib/firebase/admin/db/class";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -6,11 +6,17 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
-    const class_id = req.query.class_id as string;
+    let data;
+    try {
+      data = JSON.parse(req.body);
+    } catch (error) {
+      data = {};
+    }
+
     switch (req.method) {
-      case "GET":
-        const joinRequest = await getClassJoinRequest(class_id);
-        res.status(200).json(joinRequest);
+      case "PUT":
+        const userClass = await createClass(data);
+        res.status(200).json(userClass);
         break;
       default:
         res.status(404).json({ message: "not found" });

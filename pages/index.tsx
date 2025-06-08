@@ -69,9 +69,7 @@ export default function Home() {
                 </Link>
               </CardContent>
             </Card>
-            {fund && datePeriod && billings && (
-              <Fund fund={fund} datePeriod={datePeriod} billings={billings} />
-            )}
+            <Fund fund={fund} datePeriod={datePeriod} billings={billings} />
           </div>
           <div>
             <Announcement announcements={announcements} />

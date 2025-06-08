@@ -23,12 +23,9 @@ export async function getClassById(id: string): Promise<UserClass> {
   }
 }
 
-export async function createClass(
-  classId: string,
-  { name, description, member }: Omit<UserClass, "id">
-) {
+export async function createClass({ id, name, description, member }: UserClass) {
   try {
-    await db.collection("classes").doc(classId).set({
+    await db.collection("classes").doc(id).set({
       name,
       description,
       member,

@@ -1,4 +1,4 @@
-import { FieldPath } from "firebase-admin/firestore";
+import { FieldPath, Timestamp } from "firebase-admin/firestore";
 import { db } from "../../firebase-admin-config";
 import { DEFAULT_FUND_DOC_ID, Fund } from "../../model/fund";
 
@@ -43,7 +43,10 @@ export async function setFund(classId: string, data: Omit<Fund, "id">) {
         {
           billing_amount: data.billing_amount,
           billing_period: data.billing_period,
-          billing_start_date: data.billing_start_date,
+          billing_start_date: new Timestamp(
+            data.billing_start_date.seconds,
+            data.billing_start_date.nanoseconds
+          ),
           total_funding: data.total_funding || 0,
         },
         { merge: true }

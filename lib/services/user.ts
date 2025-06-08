@@ -12,6 +12,7 @@ export async function setUserData(data: User) {
         email: data.email,
         role: data.role,
         nim: data.nim,
+        class_id: data.class_id,
       }),
     });
   } catch (error) {

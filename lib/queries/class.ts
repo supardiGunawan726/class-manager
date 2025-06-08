@@ -5,8 +5,10 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import {
+  addClassJoinRequest,
   addClassMember,
   approveJoinRequest,
+  createClass,
   declineJoinRequest,
   getClassById,
   getClassJoinRequest,
@@ -23,13 +25,29 @@ export function useGetClassById(id?: string) {
   return query;
 }
 
+export function useCreateClass() {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: createClass,
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["class"],
+        refetchType: "all",
+      });
+    },
+  });
+
+  return mutation;
+}
+
 export function useAddClassMember() {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: (user: Omit<User, "uid"> & { password: string }) =>
       addClassMember(user),
-    onSuccess: () => {
+    onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: ["user"],
         refetchType: "all",
@@ -46,7 +64,7 @@ export function useRemoveClassMember() {
   const mutation = useMutation({
     mutationFn: ({ class_id, uid }: { class_id: string; uid: string }) =>
       removeClassMember(class_id, uid),
-    onSuccess: () => {
+    onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: ["user"],
         refetchType: "all",
@@ -64,6 +82,23 @@ export function useGetClassJoinRequest(class_id?: string) {
   });
 
   return query;
+}
+
+export function useAddClassJoinRequest() {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: ({ class_id, uid }: { class_id: string; uid: string }) =>
+      addClassJoinRequest(class_id, uid),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["user"],
+        refetchType: "all",
+      });
+    },
+  });
+
+  return mutation;
 }
 
 export function useApproveJoinRequest() {

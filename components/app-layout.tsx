@@ -18,14 +18,25 @@ type AppLayoutProps = { children: ReactNode };
 export default function AppLayout({ children }: AppLayoutProps) {
   const router = useRouter();
 
-  const { data: user, isFetched } = useGetCurrentUser();
-  const { data: userClass } = useGetClassById(user?.class_id);
+  const { data: user, isFetched: isUserFetched } = useGetCurrentUser();
+  const { data: userClass, isFetched: isUserClassFetched } = useGetClassById(
+    user?.class_id
+  );
 
   useEffect(() => {
-    if (!user && isFetched) {
+    if (!user && isUserFetched) {
       router.replace("/auth/login");
+      return;
     }
-  }, [user, isFetched]);
+    if (
+      user &&
+      isUserFetched &&
+      (!user.class_id || (!userClass && isUserClassFetched))
+    ) {
+      router.replace(user.role === "ketua" ? "/class/create" : "/class/join");
+      return;
+    }
+  }, [user, isUserFetched, userClass, isUserClassFetched]);
 
   return (
     <div className="grid grid-cols-[300px_1fr]">

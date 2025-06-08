@@ -1,7 +1,7 @@
 import {
-  getTransaction,
-  updateTransaction,
-} from "@/lib/firebase/admin/db/transaction";
+  addClassJoinRequest,
+  getClassJoinRequest,
+} from "@/lib/firebase/admin/db/class";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -10,7 +10,6 @@ export default async function handler(
 ) {
   try {
     const class_id = req.query.class_id as string;
-    const id = req.query.id as string;
     let data;
     try {
       data = JSON.parse(req.body);
@@ -20,17 +19,17 @@ export default async function handler(
 
     switch (req.method) {
       case "GET":
-        const transaction = await getTransaction(class_id, id);
-        res.status(200).json(transaction);
+        const joinRequest = await getClassJoinRequest(class_id);
+        res.status(200).json(joinRequest);
         break;
-      case "POST":
-        await updateTransaction(class_id, id, data);
+      case "PUT":
+        await addClassJoinRequest(class_id, data.uid);
         res.status(200).end();
         break;
       default:
         res.status(404).json({ message: "not found" });
     }
   } catch (error: any) {
-    res.status(500).json({ message: error.message, stack: error.stack });
+    res.status(500).json({ message: error.message });
   }
 }

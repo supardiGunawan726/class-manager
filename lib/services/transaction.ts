@@ -27,6 +27,22 @@ export async function getTransactions(
   return await res.json();
 }
 
+export async function getTransaction(
+  class_id: string,
+  id: string
+): Promise<Transaction> {
+  const res = await fetch(`/api/classes/${class_id}/transactions/${id}`, {
+    method: "GET",
+  });
+
+  if (res.status !== 200) {
+    const json = await res.json();
+    throw new Error(json.message);
+  }
+
+  return await res.json();
+}
+
 export async function createTransaction(
   class_id: string,
   data: Omit<Transaction, "id" | "proof"> & {
